@@ -148,50 +148,12 @@
 <blockquote>
 <p>To ensure transaction serializability, the server must not permit one session to perform a data definition language (DDL) statement on a table that is used in an uncompleted transaction in another session. The server achieves this by acquiring metadata locks on tables used within a transaction and deferring release of those locks until the transaction ends. A metadata lock on a table prevents changes to the table’s structure. This locking approach has the implication that a table that is being used by a transaction within one session cannot be used in DDL statements by other sessions until the transaction ends. </p>
 </blockquote>
-<p>如此一来我们就知道原来是有事务堵塞DDL操作，但是回忆昨晚的操作，我曾经把所有非Sleep的session都杀掉，但是锁依然没有释放，除非是那些Sleep的session在作怪，想想还真有可能。<br>这里我们做个试验测试下：</p>
-<p><strong>A session关闭自动提交，做一个简单的查询后，不主动提交事务。</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mysql&gt; set autocommit=0;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select * from t where id = 8;</span></div><div class="line">+------+------+-------+-------+-------+-------+-------+</div><div class="line"><span class="header">| id   | name | name1 | name2 | name3 | name4 | name5 |</span></div><div class="line">+------+------+-------+-------+-------+-------+-------+</div><div class="line"><span class="header">|    8 | NULL | NULL  | NULL  | NULL  | NULL  | NULL  |</span></div><div class="line">+------+------+-------+-------+-------+-------+-------+</div><div class="line">1 row in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt;</div></pre></td></tr></table></figure>
 
-<p><strong>B session做一个DDL操作，这时候被堵塞了。</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; alter table t add index idx_1 (id);</div><div class="line"><span class="keyword">...</span></div></pre></td></tr></table></figure>
-
-<p><strong>C session查看MySQL进程表，发现session B被堵塞，session A处于Sleep状态，这样根本看不到任何引起表锁的请求。</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; show processlist;</span></div><div class="line">+------+-----------------+-----------+------+---------+---------+---------------------------------+------------------------------------+-----------+---------------+-----------+</div><div class="line"><span class="header">| Id   | User            | Host      | db   | Command | Time    | State                           | Info                               | Rows_sent | Rows_examined | Rows_read |</span></div><div class="line">+------+-----------------+-----------+------+---------+---------+---------------------------------+------------------------------------+-----------+---------------+-----------+</div><div class="line">|    1 | event<span class="emphasis">_scheduler | localhost | NULL | Daemon  | 5286457 | Waiting on empty queue          | NULL                               |         0 |             0 |         1 | </span></div><div class="line">| 3127 | root            | localhost | test | Query   |      16 | Waiting for table metadata lock | alter table t add index idx_1 (id) |         0 |             0 |         1 | </div><div class="line">| 3133 | root            | localhost | test | Sleep   |      45 |                                 | NULL                               |         1 |             9 |        10 | </div><div class="line"><span class="header">| 3134 | root            | localhost | test | Query   |       0 | NULL                            | show processlist                   |         0 |             0 |         3 | </span></div><div class="line">+------+-----------------+-----------+------+---------+---------+---------------------------------+------------------------------------+-----------+---------------+-----------+</div><div class="line">4 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
-
-<p>为了验证当时数据库是不是就是这样引起DDL的堵塞，我大致抓取了十几秒钟的general_log，果然发现了大量的set autocommit=x/commit的操作，不出意外就是这些processlist看不到的进程堵塞了DDL。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[ root@localhost ]#cat general_log |grep <span class="operator"><span class="keyword">commit</span> |cut -f <span class="number">4</span> |sort |uniq -c</span></div><div class="line">    <span class="number">197</span> <span class="keyword">commit</span></div><div class="line">    <span class="number">186</span> <span class="keyword">SET</span> autocommit=<span class="number">0</span></div><div class="line">    <span class="number">393</span> <span class="keyword">SET</span> autocommit=<span class="number">1</span></div></pre></td></tr></table></figure>
-
-<h3 id="怎么快速发现锁的元凶">怎么快速发现锁的元凶</h3>
-<p>通过上面的实验我们证实了是因为未提交的事务引起metadata lock，但是怎么快速发现元凶并解决它呢？</p>
-<p><strong>查找InnoDB事务表</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">mysql&gt; SELECT <span class="keyword">*</span> FROM information_schema.INNODB_TRX\G </div><div class="line"><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span> 1. row <span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span></div><div class="line">                    trx_id: 57E651</div><div class="line">                 trx_state: RUNNING</div><div class="line">               trx_started: 2014-09-21 15:10:47</div><div class="line">     trx_requested_lock_id: NULL</div><div class="line">          trx_wait_started: NULL</div><div class="line">                trx_weight: 0</div><div class="line">       trx_mysql_thread_id: 3133</div><div class="line">                 trx_query: NULL</div><div class="line">       trx_operation_state: NULL</div><div class="line">         trx_tables_in_use: 0</div><div class="line">         trx_tables_locked: 0</div><div class="line">          trx_lock_structs: 0</div><div class="line">     trx_lock_memory_bytes: 376</div><div class="line">           trx_rows_locked: 0</div><div class="line">         trx_rows_modified: 0</div><div class="line">   trx_concurrency_tickets: 0</div><div class="line">       trx_isolation_level: REPEATABLE READ</div><div class="line">         trx_unique_checks: 1</div><div class="line">    trx_foreign_key_checks: 1</div><div class="line">trx_last_foreign_key_error: NULL</div><div class="line"> trx_adaptive_hash_latched: 0</div><div class="line"> trx_adaptive_hash_timeout: 10000</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
-
-<p>通过事务表我们确实快速找到了未提交的事务，但是这只是模拟的测试环境，换成是生产环境中不可能只有一张表，而且存在许多并发的事务，所以通过事务表来查找明显就不现实了。</p>
-<p><strong>通过InnoDB的状态监控</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">------------</span></div><div class="line">TRANSACTIONS</div><div class="line"><span class="comment">------------</span></div><div class="line">Trx <span class="property">id</span> counter <span class="number">57E655</span></div><div class="line">Purge done <span class="keyword">for</span> trx's n:o &lt; <span class="number">57E651</span> undo n:o &lt; <span class="number">0</span></div><div class="line">History <span class="type">list</span> <span class="property">length</span> <span class="number">1641</span></div><div class="line">LIST OF TRANSACTIONS FOR EACH SESSION:</div><div class="line"><span class="comment">---TRANSACTION 0, not started</span></div><div class="line">MySQL thread <span class="property">id</span> <span class="number">3134</span>, OS thread handle <span class="number">0x418e4940</span>, query <span class="property">id</span> <span class="number">11413</span> localhost root</div><div class="line">show engine innodb status</div><div class="line"><span class="comment">---TRANSACTION 57E652, not started</span></div><div class="line">mysql tables <span class="keyword">in</span> use <span class="number">1</span>, locked <span class="number">1</span></div><div class="line">MySQL thread <span class="property">id</span> <span class="number">3127</span>, OS thread handle <span class="number">0x412db940</span>, query <span class="property">id</span> <span class="number">11402</span> localhost root Waiting <span class="keyword">for</span> table metadata lock</div><div class="line">alter table t add index idx_1 (<span class="property">id</span>)</div><div class="line"><span class="comment">---TRANSACTION 57E651, ACTIVE 426 sec</span></div><div class="line">MySQL thread <span class="property">id</span> <span class="number">3133</span>, OS thread handle <span class="number">0x41946940</span>, query <span class="property">id</span> <span class="number">11401</span> localhost root</div><div class="line">Trx <span class="command">read</span> view will <span class="keyword">not</span> see trx <span class="keyword">with</span> <span class="property">id</span> &gt;= <span class="number">57E652</span>, sees &lt; <span class="number">57E652</span></div></pre></td></tr></table></figure>
-
-<p>上面是InnoDB status输出的事务信息（用innodb_lock_monitor来调试，发现输出是一样的，可能5.5以后的版本show engine innodb status包含了所有的信息输出了吧），从上面信息我们可以看到线程3217被锁住，但是依然找不到锁的根源，上面只有看到一个活跃的线程3133，或许我们可以推断出来。但是换成生产环境，这又不现实了。</p>
-<p>这里我们是使用事务控制来模拟锁，如果是在autocommit=1的情况下，直接加一个显示锁呢？那更悲剧了，事务表跟innodb status都看不到任何信息。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">lock</span> <span class="keyword">table</span> t <span class="keyword">read</span>/<span class="keyword">write</span>;</span></div></pre></td></tr></table></figure>
-
-<p><strong>A session</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">mysql&gt;</span> set autocommit=<span class="number">1</span>;</span></div><div class="line"><span class="constant">Query</span> <span class="constant">OK</span>, <span class="number">0</span> rows affected (<span class="number">0</span>.<span class="number">00</span> sec)</div><div class="line"><span class="input"><span class="prompt"></span></span></div><div class="line">mysql&gt; lock table t read;</div><div class="line"><span class="constant">Query</span> <span class="constant">OK</span>, <span class="number">0</span> rows affected (<span class="number">0</span>.<span class="number">00</span> sec)</div></pre></td></tr></table></figure>
-
-<p><strong>B session</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mysql&gt; alter table t add index idx_4 (id); </div><div class="line"><span class="keyword">...</span></div></pre></td></tr></table></figure>
-
-<p><strong>C session</strong></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">mysql&gt; SELECT <span class="keyword">*</span> FROM information_schema.INNODB_TRX\G </div><div class="line">Empty set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; show engine innodb status\G                   </div><div class="line"><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span> 1. row <span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span><span class="keyword">*</span></div><div class="line">...</div><div class="line">------------</div><div class="line">TRANSACTIONS</div><div class="line">------------</div><div class="line">Trx id counter 57E66B</div><div class="line">Purge done for trx's n:o <span class="variable">&lt; 57E667 undo n:o &lt; 0</span></div><div class="line">History list length 1635</div><div class="line">LIST OF TRANSACTIONS FOR EACH SESSION:</div><div class="line">---TRANSACTION 0, not started</div><div class="line">mysql tables in use 1, locked 1</div><div class="line">MySQL thread id 3138, OS thread handle 0x41915940, query id 11448 localhost root</div><div class="line">---TRANSACTION 0, not started</div><div class="line">MySQL thread id 3137, OS thread handle 0x4181e940, query id 11451 localhost root</div><div class="line">show engine innodb status</div><div class="line">---TRANSACTION 57E668, not started</div><div class="line">mysql tables in use 1, locked 1</div><div class="line">MySQL thread id 3127, OS thread handle 0x412db940, query id 11449 localhost root Waiting for table metadata lock</div><div class="line">alter table t add index idx_4 (id)</div><div class="line">...</div></pre></td></tr></table></figure>
-
-<p>所以说想快速发现锁的根源，好像还是没有快速便捷的方法，还是只能仔细的看事务表或者innodb status输出了，如果你有更好的办法也麻烦告知Orz。</p>
-<h3 id="其他总结">其他总结</h3>
-<p>在做实验看文档的过程中顺便复习了下锁，MVCC等一些列的知识，顺便记录下：</p>
-<ol>
-<li>在RR跟RC两种事务隔离级别下，InnoDB支持MVCC，我们可以理解为行级锁的妥协，在很多查询的场景下<strong>不加共享锁</strong>，实现非堵塞读，也就是说这个时候update跟select是不会互斥的（当然根据不同的事务隔离级别，查询出来的值可能是不一样的）。</li>
-<li>实验中间自己思维绕进死胡同：支持mvcc的模式下select不堵塞update是因为不加S锁，但是为什么依然堵塞DDL？难道还是有加S锁？后面再想想其实引起DDL堵塞的是metadata lock，其实跟S锁无关，是MySQL为了保证事务客串行性（serializability）所做的限制，而可串行性是并行事务正确性的唯一准则。</li>
-<li>在5.6版本以前DDL加的是write allow read lock（因为MySQL是通过重建表+重命名方式实现ddl）。</li>
-</ol>
-
+        
+          <p class="article-more-link">
+            <a href="/2014/09/20/[MySQL案例]之一把看不见的锁/#more">more >></a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
@@ -235,96 +197,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>按照惯例好像每个在github上写bolg的人都应该开篇写一章，好吧。<br>自从之前托管在同事的服务器崩溃了，我就好久没再写blog了，时隔好多好多个月，终于又鼓起勇气开始搭建blog。为了偷懒我决定抛弃wp，爱上github，然后然后下面稍微记录下这次搭建的过程，怎么也耗费了我一个下午的上班时间，罪过。<br>另外值得说的是，我是用hexo，而不是Jekyll和Octopress，为毛？简单，模板又多，好吧果然符合我喜欢偷懒的个性。</p>
-<h3 id="环境准备">环境准备</h3>
-<ol>
-<li>注册github</li>
-</ol>
-<p>过程忽略</p>
-<ol>
-<li>安装Node</li>
-</ol>
-<p>到Node.js官网下载相应平台的<a href="http://nodejs.org/download" target="_blank" rel="external">最新版本</a>，一路安装即可。</p>
-<ol>
-<li>安装Gitbash</li>
-</ol>
-<p>原谅我偷懒，google下一大把，我就不再复述。</p>
-<h3 id="安装hexo">安装hexo</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm <span class="operator"><span class="keyword">install</span> -g hexo</span></div></pre></td></tr></table></figure>
 
-<h3 id="初始化">初始化</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo init <span class="tag">&lt;<span class="title">folder</span>&gt;</span></div></pre></td></tr></table></figure>
-
-<p>或者是</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">mkdir</span> &lt;folder&gt;</div><div class="line"><span class="keyword">cd</span> &lt;folder&gt;</div><div class="line">hexo init</div></pre></td></tr></table></figure>
-
-<h3 id="生成静态页">生成静态页</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo g</div><div class="line">npm <span class="operator"><span class="keyword">install</span></span></div></pre></td></tr></table></figure>
-
-<h3 id="本地启动">本地启动</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo <span class="keyword">server</span></div></pre></td></tr></table></figure>
-
-<p>然后浏览器输入<a href="http://localhost:4000" target="_blank" rel="external">http://localhost:4000</a>就可以看到效果。</p>
-<h3 id="写文章">写文章</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo <span class="keyword">new</span> [layout] <span class="string">"postName"</span> <span class="preprocessor">#新建文章</span></div></pre></td></tr></table></figure>
-
-<h3 id="安装主题">安装主题</h3>
-<p>主题列表请见<a href="https://github.com/hexojs/hexo/wiki/Themes" target="_blank" rel="external">传送门</a></p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>git clone <span class="symbol">https:</span>/<span class="regexp">/github.com/litten</span><span class="regexp">/hexo-theme-yilia.git themes/yilia</span></div></pre></td></tr></table></figure>
-
-<h3 id="常用命令">常用命令</h3>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">hexo <span class="keyword">new</span> <span class="string">"postName"</span> <span class="preprocessor">#新建文章</span></div><div class="line">hexo <span class="keyword">new</span> page <span class="string">"pageName"</span> <span class="preprocessor">#新建页面</span></div><div class="line">hexo generate <span class="preprocessor">#生成静态页面至public目录</span></div><div class="line">hexo <span class="keyword">server</span> <span class="preprocessor">#开启预览访问端口（默认端口4000，'ctrl + c'关闭server）</span></div><div class="line">hexo deploy <span class="preprocessor">#将.deploy目录部署到GitHub</span></div></pre></td></tr></table></figure>
-
-<h3 id="目录结构">目录结构</h3>
-<pre><code>.
-├── .deploy
-├── <span class="keyword">public</span>
-├── scaffolds
-├── scripts
-├── <span class="keyword">source</span>
-|   ├── _drafts
-|   └── _posts
-├── themes
-├── _config.yml
-└── <span class="keyword">package</span>.json
-</code></pre><h3 id="发布">发布</h3>
-<ol>
-<li>配置ssh信任</li>
-</ol>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen</div></pre></td></tr></table></figure>
-
-<p>然后把生成的秘钥黏贴到github上就OK了，可以这样测试：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="title">ssh</span> -T git<span class="variable">@github</span>.com</div></pre></td></tr></table></figure>
-
-<ol>
-<li>发布</li>
-</ol>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo deploy -g</div><div class="line">hexo <span class="keyword">server</span> -g <span class="preprocessor">##本地调试</span></div></pre></td></tr></table></figure>
-
-<h3 id="其他">其他</h3>
-<p>说实话这篇文章也是滥竽充数，很多调试的过程都被我忽略了，大家就将就吧，贴几个网址大家有兴趣可以上去看看，绝对比我写的详细。</p>
-<blockquote>
-<p><a href="http://ibruce.info/2013/11/22/hexo-your-blog/" target="_blank" rel="external">http://ibruce.info/2013/11/22/hexo-your-blog/</a><br><a href="http://blog.fens.me/hexo-blog-github/" target="_blank" rel="external">http://blog.fens.me/hexo-blog-github/</a><br><a href="https://github.com/litten/hexo-theme-yilia" target="_blank" rel="external">https://github.com/litten/hexo-theme-yilia</a> (我的主题)</p>
-</blockquote>
-<h3 id="基本语法">基本语法</h3>
-<h1 id="一级标题">一级标题</h1>
-<h2 id="二级标题">二级标题</h2>
-<pre><code>无行号代码框
-hello world
-</code></pre><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">代码框框</div><div class="line">hello <span class="preprocessor">word</span></div></pre></td></tr></table></figure>
-
-<p><strong>加粗</strong></p>
-<p><em>斜体</em></p>
-<h2 id="下面是分割符">下面是分割符</h2>
-<blockquote>
-<p>引用内容</p>
-</blockquote>
-<ol>
-<li>无序标题1</li>
-<li>无序标题2</li>
-<li>无序标题3</li>
-</ol>
-<p><a href="http://www.baidu.com" target="_blank" rel="external">超链接百度</a><br><img src="http://image-myrock-github-io.qiniudn.com/17173.jpg" alt="image"></p>
-
+        
+          <p class="article-more-link">
+            <a href="/2014/09/17/hello-world/#more">more >></a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
