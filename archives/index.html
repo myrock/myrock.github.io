@@ -118,6 +118,62 @@
 </nav>
       
   
+    <article id="post-[MySQL案例]之恢复进程莫名被杀" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/22/[MySQL案例]之恢复进程莫名被杀/" class="article-date">
+  	<time datetime="2014-09-22T03:23:12.000Z" itemprop="datePublished">9月 22 2014</time>
+</a>
+      
+      
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/22/[MySQL案例]之恢复进程莫名被杀/">[MySQL案例]之恢复进程莫名被杀</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天上班就发现一起数据库例行恢复作业失败，失败提示为：“数据库恢复失败”，也就是说是在执行mysql &lt; dumpfile的时候失败了。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[ root@localhost ]#<span class="regexp">/usr/</span>local<span class="regexp">/mysql56/</span>bin<span class="regexp">/mysql -S ./m</span>ysql.sock bi_monitor &lt; <span class="regexp">/home/m</span>ysql<span class="regexp">/backup/</span><span class="number">2014</span>-<span class="number">09</span>-<span class="number">21</span>_bi_monitor_3346.sql </div><div class="line">ERROR <span class="number">2006</span> (HY000) at line <span class="number">294</span>: MySQL server has gone away</div></pre></td></tr></table></figure>
+
+<p>MySQL server has gone away是指客户端与MySQL服务端之间的连接段开，一般来说原因有这么几个：</p>
+<ol>
+<li>MySQL crash<br><em>MySQL服务实例宕机</em></li>
+<li>connection timeout<br><em>客户端连接超时</em></li>
+<li>kill connection<br><em>连接进程被杀，与connection timeout差不多，区别在于一个是MySQL Server主动，一个是被动</em></li>
+<li>max_allowed_packet too small<br><em>返回结果集大于max_allowed_packet限制</em></li>
+</ol>
+
+        
+          <p class="article-more-link">
+            <a href="/2014/09/22/[MySQL案例]之恢复进程莫名被杀/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-[MySQL案例]之一把看不见的锁" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
