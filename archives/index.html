@@ -114,6 +114,59 @@
 </nav>
       
   
+    <article id="post-[MySQL案例]之in与range查询" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/24/[MySQL案例]之in与range查询/" class="article-date">
+  	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/24/[MySQL案例]之in与range查询/">[MySQL案例]之in与range查询</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：</p>
+<blockquote>
+<p>老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查询优化可能需要花很多时间，并消耗大量内存。新版本MySQL在组合数超过一定的数量就不进行计划评估了，这可能导致MySQL不能很好的利用索引。</p>
+</blockquote>
+<p>因为我也不知道也找不到这里的“一定数量”是多少，因此我一直在跟大家伙说in一定要少，最好少于10个，不要出现两个in，即便出现了乘积必须小于20。说到底我一直认为少量的in()是木有问题的，索引都是可以走的，一直到今天优化了一个SQL。</p>
+
+        
+          <p class="article-more-link">
+            <a href="/2014/09/24/[MySQL案例]之in与range查询/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-[MySQL案例]之恢复进程莫名被杀" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
