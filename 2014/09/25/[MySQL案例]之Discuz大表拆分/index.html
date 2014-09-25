@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[MySQL案例]之Discuz大表拆分 | HiDBA | 林晓嘉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="背景
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MySQL案例]之Discuz大表拆分">
+<meta property="og:url" content="http://myrock.github.io/2014/09/25/[MySQL案例]之Discuz大表拆分/">
+<meta property="og:site_name" content="HiDBA | 林晓嘉">
+<meta property="og:description" content="背景
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[MySQL案例]之Discuz大表拆分">
+<meta name="twitter:description" content="背景
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+
+  
+    <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Technology change our life.</p>
+		
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">HOME</a></li>
+	        
+				<li><a href="/tags/database">DATABASE</a></li>
+	        
+				<li><a href="/tags/linux">LINUX</a></li>
+	        
+				<li><a href="/tags/other">Other Technology</a></li>
+	        
+				<li><a href="/tags/life">LIFE</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+		        
+			</div>
+		</nav>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Technology change our life.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">HOME</a></li>
+		        
+					<li><a href="/tags/database">DATABASE</a></li>
+		        
+					<li><a href="/tags/linux">LINUX</a></li>
+		        
+					<li><a href="/tags/other">Other Technology</a></li>
+		        
+					<li><a href="/tags/life">LIFE</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-[MySQL案例]之Discuz大表拆分" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/25/[MySQL案例]之Discuz大表拆分/" class="article-date">
+  	<time datetime="2014-09-25T12:19:18.000Z" itemprop="datePublished">9月 25 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [MySQL案例]之Discuz大表拆分
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="背景">背景</h1>
+<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
+<p>以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简单分析。抛开前期准备，后期处理等等步骤，这里我们就说下中间的重要环节。</p>
+<pre><code><span class="bullet">1. </span>在帖子表里面新增一个字段，且加一条索引
+<span class="bullet">2. </span>更新新增字段的值为：mod(tid,100)+1
+<span class="bullet">3. </span>创建一个tempfs分区（需要比帖子表.MYD文件大）
+<span class="bullet">4. </span>使用select into oufile导出数据
+<span class="bullet">5. </span>增大innodb<span class="emphasis">_buffer_</span>pool<span class="emphasis">_size,max_</span>allowed<span class="emphasis">_packet，缩小key_</span>buffer_size
+<span class="bullet">6. </span>load data infile
+</code></pre><p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
+<a id="more"></a>
+
+<h1 id="分析">分析</h1>
+<h2 id="第一、二点">第一、二点</h2>
+<p>整个分表的方案变化大概是这样的：<br>第一个方案是由开发同学直接写程序逐条导入，但是马上被我们pass了，超过1亿条的数据要导到猴年马月啊。<br>第二个方案是mysqldump -w，但是考虑到新表是innodb需要新增一个自增主键，这样导入会有问题，所以第二个方案也被pass了。<br>第三个方案就是select into outfile + load data infile，但是这里同样存在一个问题：MySQL不支持函数索引，所以mod(tid,100)+1=x这样是走不了索引。最后只能使用折中的临时方案：新增一个临时字段xxid用来存放mod(tid,100)+1计算后的值，select into outfile的时候直接按xxid查询就可以走索引了。</p>
+<p>另外值得一提的是</p>
+<blockquote>
+<p>一般熟悉数据库的人都有这么一个认知，在你大量更新或者插入数据的时候，最好先删除或者禁用掉索引，等数据插入或者更新完成之后再创建索引，但是这里我们确实先创建了索引再更新数据，这是为什么？<br>其实没有索引的字段更新或者插入数据远远比有索引的字段来的快，而且索引越多插入或者更新的速度就越慢，这点是没错的。但是要注意我们这次的操作中了：add col，add index，update data，其中add col跟add index是可以合并在一个ddl里面执行的，而1次ddl+1次update data的时间小于2次ddl+1次update，这就是为什么我们选择先创建索引再更新数据的原因。当然如果这个字段早就存在不需要创建的话，那肯定是先更新数据库再创建索引了。</p>
+</blockquote>
+<p>还有一点要说的是</p>
+<blockquote>
+<p>我们在ddl以及update的时候没有对数据库做任何buffer优化设置，其实在一开始的时候我一直觉得加大：key_buffer_size、sort_buffer_size、read_buffer_size、tmp_table_size、max_heap_table_size几个参数可以加速ddl跟update的效率，实际上经过几次测试几乎是没有提升的。key_buffer_size只是缓存了索引数据，其他几个buffer分别是排序区缓存、表顺序查询缓存以及临时表大小设置，不懂为什么MyISAM为什么这样做不能加速ddl，还有如果是InnoDB呢（读不懂源码只能靠猜测，真蛋疼）？我一直以为是可以的，找个时间要做个实验看看。</p>
+</blockquote>
+<h2 id="第三点">第三点</h2>
+<p>使用tempfs来装载MyISAM的数据文件，能够加速数据导出效率，而且提升超过100%。<br>一开始也没想到这个方法，只是在测试的时候发现为什么总是第一次效率很低，第二次效率就非常高，提升超过100%。首先我想到的是key_buffer，但是key_buffer只是缓存了索引数据，为了验证重启了数据库再测试发现效率还是高导出速度还是很快。如果不是key_buffer，那是可能就是Linux的cache。为了验证这个想法，我把cache释放掉，再执行导出操作，果然又变成第一次那样很慢。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sync && echo <span class="number">3</span> &gt; /<span class="keyword">proc</span>/sys/vm/drop_caches;</div></pre></td></tr></table></figure>
+
+<p>但是还是存在问题，本地文件导入到cache中的只有访问的部分，也就是说每次执行select into outfile操作都是很慢，只有第二次执行相同数据导出的时候效率才会提升，这样一来对我们的操作其实是没有帮助的，除非我们能够事先把整个数据文件导入到内存中。<br>于是就挂载了一个tmpfs，然后把.MYD文件丢进去再link到datadir，再测试果然效率刚刚的。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">mkdir</span> /home/memdir</div><div class="line">mount tmpfs /home/memdir/ -<span class="keyword">t</span> tmpfs -<span class="keyword">o</span> size=<span class="number">10</span><span class="keyword">g</span></div><div class="line"><span class="keyword">cp</span> pre_forum_post_2.MYD /home/memdir/</div><div class="line">mv pre_forum_post_2.MYD pre_forum_post_2.MYD.backup</div><div class="line"><span class="keyword">ln</span> -<span class="keyword">s</span> /home/memdir/pre_forum_post_2.MYD  ./</div></pre></td></tr></table></figure>
+
+<h2 id="第四点">第四点</h2>
+<p>开始导出，这个没什么好说的，直接写了个脚本开了5个并发进程把数据分别写到1~100这100个文件中。</p>
+<h2 id="第五点">第五点</h2>
+<p>后面就是InnoDB的天下了，MyISAM从此退出江湖，所以要修改下buffer。另外加大max_allowed_packet是怕有的单个outfile文件的value过大，以防万一（刚好前几天因为max_allowed_packet设置的问题导致一个数据库恢复测试失败，这次还是小心为上）。</p>
+<h2 id="第五点-1">第五点</h2>
+<p>也没什么好说的，一样写个脚本开了5个并发进程在写数据，需要一说的的是新表多了一个自增ID，因此load的时候需要把新表除了新ID以外的所有字段名写上，费了点功夫。</p>
+<h1 id="总结">总结</h1>
+<p>这个discuz数据库的帖子表总共约60G的数据文件+索引文件，约一亿三千万行数据，我们分四个数据库节点并行操作，预计需要花近3个小时才能完成分表操作（不包含前期准备/备份，后期测试等等部分耗时）。</p>
+<h1 id="后续">后续</h1>
+<p>后续还有一些需要验证测试的有：</p>
+<ol>
+<li>MyISAM的ddl以及update可以通过哪些参数设置优化？</li>
+<li>InnoDB的ddl以及update可以通过哪些参数设置优化？</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/09/24/[MySQL案例]之in与range查询/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[MySQL案例]之in与range查询</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="[MySQL案例]之Discuz大表拆分" data-title="[MySQL案例]之Discuz大表拆分" data-url="http://myrock.github.io/2014/09/25/[MySQL案例]之Discuz大表拆分/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-right">
+    		&copy; 2014 林晓嘉
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>
