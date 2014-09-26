@@ -10,7 +10,7 @@
 以这件事为背景，对这次升级过程中数据库的操作做一个记录以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL案例]之Discuz大表拆分">
-<meta property="og:url" content="http://myrock.github.io/2014/09/25/[MySQL案例]之Discuz大表拆分/">
+<meta property="og:url" content="http://myrock.github.io/2014/09/25/separate_table/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
 <meta property="og:description" content="背景
 相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
@@ -119,10 +119,10 @@
 		</header>				
 	</div>
 </nav>
-      <article id="post-[MySQL案例]之Discuz大表拆分" class="article article-type-post" itemscope itemprop="blogPost">
+      <article id="post-separate_table" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2014/09/25/[MySQL案例]之Discuz大表拆分/" class="article-date">
+      <a href="/2014/09/25/separate_table/" class="article-date">
   	<time datetime="2014-09-25T12:19:18.000Z" itemprop="datePublished">9月 25 2014</time>
 </a>
       
@@ -218,7 +218,7 @@
 <nav id="article-nav">
   
   
-    <a href="/2014/09/24/[MySQL案例]之in与range查询/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2014/09/24/in_and_range/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">[MySQL案例]之in与range查询</div>
       <strong class="article-nav-caption">></strong>
     </a>
@@ -248,7 +248,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="[MySQL案例]之Discuz大表拆分" data-title="[MySQL案例]之Discuz大表拆分" data-url="http://myrock.github.io/2014/09/25/[MySQL案例]之Discuz大表拆分/"></div>
+	<div class="ds-thread" data-thread-key="separate_table" data-title="[MySQL案例]之Discuz大表拆分" data-url="http://myrock.github.io/2014/09/25/separate_table/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">

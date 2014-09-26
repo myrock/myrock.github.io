@@ -10,7 +10,7 @@
 老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL案例]之in与range查询">
-<meta property="og:url" content="http://myrock.github.io/2014/09/24/[MySQL案例]之in与range查询/">
+<meta property="og:url" content="http://myrock.github.io/2014/09/24/in_and_range/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
 <meta property="og:description" content="首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：
 
@@ -118,10 +118,10 @@
 		</header>				
 	</div>
 </nav>
-      <article id="post-[MySQL案例]之in与range查询" class="article article-type-post" itemscope itemprop="blogPost">
+      <article id="post-in_and_range" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2014/09/24/[MySQL案例]之in与range查询/" class="article-date">
+      <a href="/2014/09/24/in_and_range/" class="article-date">
   	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24 2014</time>
 </a>
       
@@ -177,7 +177,7 @@
     
 <nav id="article-nav">
   
-    <a href="/2014/09/25/[MySQL案例]之Discuz大表拆分/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/09/25/separate_table/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
@@ -187,7 +187,7 @@
     </a>
   
   
-    <a href="/2014/09/22/[MySQL案例]之恢复进程莫名被杀/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2014/09/22/recover_be_killed/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">[MySQL案例]之恢复进程莫名被杀</div>
       <strong class="article-nav-caption">></strong>
     </a>
@@ -217,7 +217,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="[MySQL案例]之in与range查询" data-title="[MySQL案例]之in与range查询" data-url="http://myrock.github.io/2014/09/24/[MySQL案例]之in与range查询/"></div>
+	<div class="ds-thread" data-thread-key="in_and_range" data-title="[MySQL案例]之in与range查询" data-url="http://myrock.github.io/2014/09/24/in_and_range/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
