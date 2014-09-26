@@ -141,15 +141,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="背景">背景</h1>
-<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
+<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
 <p>以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简单分析。抛开前期准备，后期处理等等步骤，这里我们就说下中间的重要环节。</p>
-<pre><code><span class="bullet">1. </span>在帖子表里面新增一个字段，且加一条索引
-<span class="bullet">2. </span>更新新增字段的值为：mod(tid,100)+1
-<span class="bullet">3. </span>创建一个tempfs分区（需要比帖子表.MYD文件大）
-<span class="bullet">4. </span>使用select into oufile导出数据
-<span class="bullet">5. </span>增大innodb<span class="emphasis">_buffer_</span>pool<span class="emphasis">_size,max_</span>allowed<span class="emphasis">_packet，缩小key_</span>buffer_size
-<span class="bullet">6. </span>load data infile
-</code></pre><p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
+<blockquote>
+<p>1.在帖子表里面新增一个字段，且加一条索引<br>2.更新新增字段的值为：mod(tid,100)+1<br>3.创建一个tempfs分区（需要比帖子表.MYD文件大）<br>4.使用select into oufile并发导出数据<br>5.增大innodb_buffer_pool_size,max_allowed_packet，缩小key_buffer_size<br>6.使用load data infile并发导入数据</p>
+</blockquote>
+<p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
 
         
           <p class="article-more-link">

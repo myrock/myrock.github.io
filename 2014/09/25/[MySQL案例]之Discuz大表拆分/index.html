@@ -6,20 +6,21 @@
   <title>[MySQL案例]之Discuz大表拆分 | HiDBA | 林晓嘉</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="背景
-相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
-以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL案例]之Discuz大表拆分">
 <meta property="og:url" content="http://myrock.github.io/2014/09/25/[MySQL案例]之Discuz大表拆分/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
 <meta property="og:description" content="背景
-相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
-以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以">
+<meta property="og:image" content="http://image-myrock-github-io.qiniudn.com/update_index_time_diff.jpg">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[MySQL案例]之Discuz大表拆分">
 <meta name="twitter:description" content="背景
-相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
-以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简">
+相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。
+以这件事为背景，对这次升级过程中数据库的操作做一个记录以">
 
   
     <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
@@ -145,48 +146,64 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="背景">背景</h1>
-<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。我们的论坛也是，终于在最近要开刀改版了。改版说也简单就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
+<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
 <p>以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简单分析。抛开前期准备，后期处理等等步骤，这里我们就说下中间的重要环节。</p>
-<pre><code><span class="bullet">1. </span>在帖子表里面新增一个字段，且加一条索引
-<span class="bullet">2. </span>更新新增字段的值为：mod(tid,100)+1
-<span class="bullet">3. </span>创建一个tempfs分区（需要比帖子表.MYD文件大）
-<span class="bullet">4. </span>使用select into oufile导出数据
-<span class="bullet">5. </span>增大innodb<span class="emphasis">_buffer_</span>pool<span class="emphasis">_size,max_</span>allowed<span class="emphasis">_packet，缩小key_</span>buffer_size
-<span class="bullet">6. </span>load data infile
-</code></pre><p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
+<blockquote>
+<p>1.在帖子表里面新增一个字段，且加一条索引<br>2.更新新增字段的值为：mod(tid,100)+1<br>3.创建一个tempfs分区（需要比帖子表.MYD文件大）<br>4.使用select into oufile并发导出数据<br>5.增大innodb_buffer_pool_size,max_allowed_packet，缩小key_buffer_size<br>6.使用load data infile并发导入数据</p>
+</blockquote>
+<p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
 <a id="more"></a>
 
 <h1 id="分析">分析</h1>
-<h2 id="第一、二点">第一、二点</h2>
-<p>整个分表的方案变化大概是这样的：<br>第一个方案是由开发同学直接写程序逐条导入，但是马上被我们pass了，超过1亿条的数据要导到猴年马月啊。<br>第二个方案是mysqldump -w，但是考虑到新表是innodb需要新增一个自增主键，这样导入会有问题，所以第二个方案也被pass了。<br>第三个方案就是select into outfile + load data infile，但是这里同样存在一个问题：MySQL不支持函数索引，所以mod(tid,100)+1=x这样是走不了索引。最后只能使用折中的临时方案：新增一个临时字段xxid用来存放mod(tid,100)+1计算后的值，select into outfile的时候直接按xxid查询就可以走索引了。</p>
-<p>另外值得一提的是</p>
+<h2 id="方案的演化">方案的演化</h2>
+<p>整个分表的方案变化大概是这样的：</p>
 <blockquote>
-<p>一般熟悉数据库的人都有这么一个认知，在你大量更新或者插入数据的时候，最好先删除或者禁用掉索引，等数据插入或者更新完成之后再创建索引，但是这里我们确实先创建了索引再更新数据，这是为什么？<br>其实没有索引的字段更新或者插入数据远远比有索引的字段来的快，而且索引越多插入或者更新的速度就越慢，这点是没错的。但是要注意我们这次的操作中了：add col，add index，update data，其中add col跟add index是可以合并在一个ddl里面执行的，而1次ddl+1次update data的时间小于2次ddl+1次update，这就是为什么我们选择先创建索引再更新数据的原因。当然如果这个字段早就存在不需要创建的话，那肯定是先更新数据库再创建索引了。</p>
+<p>第一个方案：由开发同学直接写程序逐条导入，但是马上被我们pass了，1亿四千万行数据逐行插入在时间上是不可接受的。<br>第二个方案：mysqldump -w，但是考虑到新表是innodb需要新增一个自增主键，这样导入会有问题，所以第二个方案也被pass了。<br>第三个方案：select into outfile + load data infile，但是这里同样存在一个问题：MySQL不支持函数索引，所以mod(tid,100)+1=x这样是走不了索引。最后只能使用折中的临时方案：新增一个临时字段xxid用来存放mod(tid,100)+1计算后的值，select into outfile的时候直接按xxid查询就可以走索引了。</p>
 </blockquote>
-<p>还有一点要说的是</p>
+<h2 id="DDL_&amp;_UPDATE的优化">DDL &amp; UPDATE的优化</h2>
+<blockquote>
+<p>一般熟悉数据库的人都有这么一个认知：在你大量更新或者插入数据的时候，最好先删除或者禁用掉索引，等数据插入或者更新完成之后再创建索引，但是这里我们确实先创建了索引再更新数据，这是为什么？</p>
+</blockquote>
+<p>我们来看下这三种方案：</p>
+<blockquote>
+<p>方案1：alter table t add col, add index; update table set xxid1=xxx;<br>方案2：alter table t add col, add index; alter table t disable keys; update table set xxid1=xxx; alter table t enable keys;<br>方案3：alter table t add col;  update table set xxid1=xxx; alter table t add index;</p>
+</blockquote>
+<p>按照一般的习惯我们会选择第二种或者第三种方案，因为它们符合优化规则，在批量更新或者插入数据前先不要创建索引或者先禁用索引。其中方案二可能是最优的，因为MyISAM引擎对disable/enable keys是有优化的，我们来看这么一段说明：</p>
+<blockquote>
+<p>ALTER TABLE…DISABLE KEYS让MySQL停止更新MyISAM表中的非唯一索引。然后使用ALTER TABLE … ENABLE KEYS重新创建丢失的索引。进行此操作时，MySQL采用一种特殊的算法，比一个接一个地插入关键字要快很多。因此，在进行成批插入操作前先使关键字禁用可以大大地加快速度。</p>
+</blockquote>
+<p>那么我们大致可以得出方案2&gt;方案3&gt;方案1，但是从下图的测试结果看却不是这么一回事？<br><img src="http://image-myrock-github-io.qiniudn.com/update_index_time_diff.jpg" alt="image"></p>
+<ol>
+<li>这张表原本就存在1100W行记录，属于一张不小的表，而且在这次操作中需要新增一个字段，也就是第一个操作都是一个ddl动作；</li>
+<li>在MySQL里面ddl动作是可以合并的，合并以后只会产生一次临时表动作，因此1次ddl耗时绝对小于2次ddl耗时；</li>
+<li>ALTER TABLE…DISABLE/ENABLE KEYS针对的是MyISAM（非InnoDB表）的所有非唯一索引，注意是所有而不是更新目标字段的的索引，而本次测试表中除了主键以外一共有6条非唯一索引；</li>
+</ol>
+<p>基于以上几个原因，所以实际的结果是方案1&gt;方案2&gt;方案3。另外为了验证，我么干掉了其他5条非唯一索引，enable keys耗时从161秒降低到45秒，也就是说如果<strong>在一个少量的非唯一索引的环境中，方案二才是最优选择</strong>。</p>
+<p>Ps：从上面实验数据确实可以看出，有没有索引对数据更新/插入确实存在很大的影响，对一个定长4字节字段加一条索引，数据更新的效率就差了超过100%了，所以以后类似的问题大家需要多多注意。</p>
+<p><strong>还有一点要说明的是</strong></p>
 <blockquote>
 <p>我们在ddl以及update的时候没有对数据库做任何buffer优化设置，其实在一开始的时候我一直觉得加大：key_buffer_size、sort_buffer_size、read_buffer_size、tmp_table_size、max_heap_table_size几个参数可以加速ddl跟update的效率，实际上经过几次测试几乎是没有提升的。key_buffer_size只是缓存了索引数据，其他几个buffer分别是排序区缓存、表顺序查询缓存以及临时表大小设置，不懂为什么MyISAM为什么这样做不能加速ddl，还有如果是InnoDB呢（读不懂源码只能靠猜测，真蛋疼）？我一直以为是可以的，找个时间要做个实验看看。</p>
 </blockquote>
-<h2 id="第三点">第三点</h2>
+<h2 id="为什么使用tmpfs">为什么使用tmpfs</h2>
 <p>使用tempfs来装载MyISAM的数据文件，能够加速数据导出效率，而且提升超过100%。<br>一开始也没想到这个方法，只是在测试的时候发现为什么总是第一次效率很低，第二次效率就非常高，提升超过100%。首先我想到的是key_buffer，但是key_buffer只是缓存了索引数据，为了验证重启了数据库再测试发现效率还是高导出速度还是很快。如果不是key_buffer，那是可能就是Linux的cache。为了验证这个想法，我把cache释放掉，再执行导出操作，果然又变成第一次那样很慢。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sync && echo <span class="number">3</span> &gt; /<span class="keyword">proc</span>/sys/vm/drop_caches;</div></pre></td></tr></table></figure>
 
 <p>但是还是存在问题，本地文件导入到cache中的只有访问的部分，也就是说每次执行select into outfile操作都是很慢，只有第二次执行相同数据导出的时候效率才会提升，这样一来对我们的操作其实是没有帮助的，除非我们能够事先把整个数据文件导入到内存中。<br>于是就挂载了一个tmpfs，然后把.MYD文件丢进去再link到datadir，再测试果然效率刚刚的。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">mkdir</span> /home/memdir</div><div class="line">mount tmpfs /home/memdir/ -<span class="keyword">t</span> tmpfs -<span class="keyword">o</span> size=<span class="number">10</span><span class="keyword">g</span></div><div class="line"><span class="keyword">cp</span> pre_forum_post_2.MYD /home/memdir/</div><div class="line">mv pre_forum_post_2.MYD pre_forum_post_2.MYD.backup</div><div class="line"><span class="keyword">ln</span> -<span class="keyword">s</span> /home/memdir/pre_forum_post_2.MYD  ./</div></pre></td></tr></table></figure>
 
-<h2 id="第四点">第四点</h2>
+<h2 id="数据导出">数据导出</h2>
 <p>开始导出，这个没什么好说的，直接写了个脚本开了5个并发进程把数据分别写到1~100这100个文件中。</p>
-<h2 id="第五点">第五点</h2>
+<h2 id="修改数据库配置">修改数据库配置</h2>
 <p>后面就是InnoDB的天下了，MyISAM从此退出江湖，所以要修改下buffer。另外加大max_allowed_packet是怕有的单个outfile文件的value过大，以防万一（刚好前几天因为max_allowed_packet设置的问题导致一个数据库恢复测试失败，这次还是小心为上）。</p>
-<h2 id="第五点-1">第五点</h2>
+<h2 id="数据导入">数据导入</h2>
 <p>也没什么好说的，一样写个脚本开了5个并发进程在写数据，需要一说的的是新表多了一个自增ID，因此load的时候需要把新表除了新ID以外的所有字段名写上，费了点功夫。</p>
 <h1 id="总结">总结</h1>
-<p>这个discuz数据库的帖子表总共约60G的数据文件+索引文件，约一亿三千万行数据，我们分四个数据库节点并行操作，预计需要花近3个小时才能完成分表操作（不包含前期准备/备份，后期测试等等部分耗时）。</p>
+<p>这个discuz数据库的帖子表总共约72G+的数据文件+索引文件，约一亿四千万行数据，我们分四个数据库节点并行操作，预计需要花近3个小时才能完成分表操作（不包含前期准备/备份，后期测试等等部分耗时）。<br>中间主要是通过tmpfs加速导出，并行执行加速导出导入操作，最终结果尚可接受，但还存在优化空间。</p>
 <h1 id="后续">后续</h1>
 <p>后续还有一些需要验证测试的有：</p>
 <ol>
-<li>MyISAM的ddl以及update可以通过哪些参数设置优化？</li>
-<li>InnoDB的ddl以及update可以通过哪些参数设置优化？</li>
+<li>MyISAM的ddl以及update能否通过哪些参数设置优化？</li>
+<li>InnoDB的ddl以及update能否通过哪些参数设置优化？</li>
 </ol>
 
       
