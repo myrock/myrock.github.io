@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[MySQL基础篇]之连接查询 | HiDBA | 林晓嘉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MySQL基础篇]之连接查询">
+<meta property="og:url" content="http://myrock.github.io/2014/09/26/join-query-in-mysql/">
+<meta property="og:site_name" content="HiDBA | 林晓嘉">
+<meta property="og:description" content="MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[MySQL基础篇]之连接查询">
+<meta name="twitter:description" content="MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问">
+
+  
+    <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Technology change our life.</p>
+		
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">HOME</a></li>
+	        
+				<li><a href="/tags/database">DATABASE</a></li>
+	        
+				<li><a href="/tags/linux">LINUX</a></li>
+	        
+				<li><a href="/tags/other">Other Technology</a></li>
+	        
+				<li><a href="/tags/life">LIFE</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+		        
+					<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+		        
+			</div>
+		</nav>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Technology change our life.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">HOME</a></li>
+		        
+					<li><a href="/tags/database">DATABASE</a></li>
+		        
+					<li><a href="/tags/linux">LINUX</a></li>
+		        
+					<li><a href="/tags/other">Other Technology</a></li>
+		        
+					<li><a href="/tags/life">LIFE</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-join-query-in-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/26/join-query-in-mysql/" class="article-date">
+  	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [MySQL基础篇]之连接查询
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问题，要怎么做才能做到最优查询。</p>
+<h2 id="重点说在前面">重点说在前面</h2>
+<ol>
+<li>MySQL对表连接至今只支持nested loop join，而不支持hash join，这个是MySQL不建议执行复杂关联查询的根源（MariaDB已经实现hash join）<blockquote>
+<p>通过驱动表的结果集作为循环基础数据，然后一条一条地通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。</p>
+</blockquote>
+</li>
+<li>优化的目标是尽可能减少关联查询中nested loop的循环次数，也就是说尽量缩小驱动表的结果集</li>
+<li>inner join驱动顺序由优化器自己指定，如果优化器选择有误可以使用straight_join自己指定驱动顺序以达到优化的目的</li>
+<li>left join驱动顺序是固定的，left join左边的表为驱动表，右边为匹配表，RIGHT JOIN则刚好相反<blockquote>
+<p>其实这也不是绝对的，当left join跟inner join等价的时候，MySQL优化器就会自己选择驱动表，需求请见下文“容易混淆的地方”部分</p>
+</blockquote>
+</li>
+<li>存在group by或者order by子句的关联查询中，如果引用的字段是驱动表的字段那么分组或者排序是可以使用索引的，如果引用的是其他匹配表的字段，那边分组或者排序动作则无法使用索引</li>
+<li>在MySQL5.6以前的版本关联子查询可以用关联查询来替代优化（MySQL5.6或者更新的版本或者MariaDB等就无需替代，优化器会自动帮你优化处理）</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="什么叫连接查询">什么叫连接查询</h2>
+<p>首先我们要搞清楚什么叫连接查询，内连接跟外连接又有什么区别？</p>
+<p><strong>内连接</strong></p>
+<pre><code><span class="operator"><span class="keyword">select</span> * <span class="keyword">from</span> a <span class="keyword">inner</span> <span class="keyword">join</span> b <span class="keyword">on</span> a.id = b.id;</span>
+等价于
+<span class="operator"><span class="keyword">select</span> * <span class="keyword">from</span> a,b <span class="keyword">where</span> a.id = b.id;</span>
+</code></pre><p><strong>外连接</strong></p>
+<pre><code><span class="operator"><span class="keyword">select</span> * <span class="keyword">from</span> a <span class="keyword">left</span> <span class="keyword">join</span> b <span class="keyword">on</span> a.id = b.id;</span>
+<span class="operator"><span class="keyword">select</span> * <span class="keyword">from</span> a <span class="keyword">right</span> <span class="keyword">join</span> b <span class="keyword">on</span> a.id = b.id;</span>
+</code></pre><p>简单来说内连接就是检索出与连接条件完全匹配的数据行；而外连接则是保留了所有驱动表的数据，匹配表中无法匹配的数据则以NULL输出，下面是一个简单的例子。</p>
+<p><strong><em>test 1-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">mysql&gt; create table a (id int not null , name varchar(10) not null default '<span class="emphasis">');</span></div><div class="line">Query OK, 0 rows affected (0.06 sec)</div><div class="line"></div><div class="line">mysql&gt; create table b (id int not null , name varchar(10) not null default '<span class="emphasis">'); </span></div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; insert into a values (1,<span class="emphasis">'aaa'</span>),(2,<span class="emphasis">'bbb'</span>),(3,<span class="emphasis">'ccc'</span>);</div><div class="line">Query OK, 3 rows affected (0.00 sec)</div><div class="line">Records: 3  Duplicates: 0  Warnings: 0</div><div class="line"></div><div class="line">mysql&gt; insert into b values (1,<span class="emphasis">'aaa'</span>),(3,<span class="emphasis">'ccc'</span>),(4,<span class="emphasis">'ddd'</span>); </div><div class="line">Query OK, 3 rows affected (0.00 sec)</div><div class="line">Records: 3  Duplicates: 0  Warnings: 0</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select * from a inner join b on a.id = b.id;</span></div><div class="line">+----+------+----+------+</div><div class="line"><span class="header">| id | name | id | name |</span></div><div class="line">+----+------+----+------+</div><div class="line">|  1 | aaa  |  1 | aaa  |</div><div class="line"><span class="header">|  3 | ccc  |  3 | ccc  |</span></div><div class="line">+----+------+----+------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"><span class="comment">// 这就是内连接</span></div><div class="line"></div><div class="line"><span class="header">mysql&gt; select * from a left join b on a.id = b.id;</span></div><div class="line">+----+------+------+------+</div><div class="line"><span class="header">| id | name | id   | name |</span></div><div class="line">+----+------+------+------+</div><div class="line">|  1 | aaa  |    1 | aaa  |</div><div class="line">|  3 | ccc  |    3 | ccc  |</div><div class="line"><span class="header">|  2 | bbb  | NULL | NULL |</span></div><div class="line">+----+------+------+------+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line"><span class="comment">// 这就是外连接</span></div></pre></td></tr></table></figure>
+
+<h2 id="使用straight_join优化inner_join">使用straight_join优化inner join</h2>
+<p>内连接跟外连接的区别在于返回值范围不同，驱动表无法自行选择，其余就没什么太大的区别。同样需要注意驱动表选择、需要注意分组或者排序的选择等等。这里我们通过下面这个案例来演示下怎么使用straight_join自己指定驱动表来优化inner join语句。</p>
+<p><strong>测试环境</strong>（下面所有的SQL测试都是基于同样的环境）</p>
+<blockquote>
+<p>Linux as 5.8<br>Percona 5.6.13 &amp; MySQL 5.5.28<br>t_user InnoDB 10万数据<br>t_user_log InnoDB 约3000万数据</p>
+</blockquote>
+<p>执行一个简单的关联查询</p>
+<p><strong><em>test 2-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.* from t_user_log a inner join t_user b on a.uid = b.uid order by a.logintime desc limit <span class="number">100</span>;</div><div class="line"><span class="keyword">...</span></div><div class="line"><span class="number">100</span> rows <span class="keyword">in</span> set (<span class="number">17</span> min <span class="number">41.83</span> sec)</div></pre></td></tr></table></figure>
+
+<p>我们来看下它的执行计划：MySQL的优化器选择了t_user来做驱动表，根据我们之前说的存在order by子句的情况，MySQL优化器存在无法使用索引（uid_logintime）来完成排序动作，只能通过创建临时表来保持临时结果集，然后在临时结果集中完成排序同坐，于是就产生了Using temporary。我们完全可以预见这个SQL执行是有多么慢多么的耗费服务器资源特别是IO资源，实际上在我测试的过程中服务器的iowait%一直保持在6%左右。</p>
+<p><strong><em>test 2-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; explain select a.* from t_user_log a inner join t_user b on a.uid = b.uid order by a.logintime desc limit 100;</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+----------------------------------------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key     | key_len | ref                | rows   | Extra                                        |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+----------------------------------------------+</div><div class="line">|  1 | SIMPLE      | b     | index | idx<span class="emphasis">_uid               | idx_</span>uid | 4       | NULL               | 100105 | Using index; Using temporary; Using filesort | </div><div class="line"><span class="header">|  1 | SIMPLE      | a     | ref   | uid_logintime,idx_uid | idx_uid | 4       | join_test_db.b.uid |      5 | NULL                                         | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+----------------------------------------------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; show index from t<span class="emphasis">_user_</span>log;</div><div class="line"><span class="bullet">...</span></div><div class="line">| t<span class="emphasis">_user_</span>log |          1 | logintime     |            1 | logintime   | A         |     3668150 |     NULL | NULL   |      | BTREE      |         |               ...</div></pre></td></tr></table></figure>
+
+<p>MySQL优化器选择驱动表是粗暴的，简单的以当前条件返回结果集来判断，结构集小的就是驱动表。在这个案例中除了排序并无其他条件，也就是说结果集是3000万比10万，于是MySQL优化器选择了t_user当驱动表，然后就发生了上面的一幕。<br>如果说我们要优化这个SQL，那么首先应该就是避免Using temporary产生，也就是说我们需要在索引中完成排序动作。那么根据我们上面描述的带有order by自己的关联查询的情况，如果order by子句想使用索引那么就必须把引用字段所在的表作为驱动表，也就是案例中的t_user_log，这里我使用straight_join将t_user_log设置成驱动表看看会是什么情况。</p>
+<p><strong><em>test 2-3</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.* from t<span class="emphasis">_user_</span>log a straight<span class="emphasis">_join t_</span>user b on a.uid = b.uid order by a.logintime desc limit 100;</div><div class="line"><span class="bullet">...</span></div><div class="line">100 rows in set (0.14 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select a.* from t_user_log a straight_join t_user b on a.uid = b.uid order by a.logintime desc limit 100;</span></div><div class="line">+----+-------------+-------+-------+-----------------------+-----------+---------+--------------------+------+-------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key       | key_len | ref                | rows | Extra       |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+-----------+---------+--------------------+------+-------------+</div><div class="line">|  1 | SIMPLE      | a     | index | uid<span class="emphasis">_logintime,idx_</span>uid | logintime | 4       | NULL               |  100 | NULL        | </div><div class="line"><span class="header">|  1 | SIMPLE      | b     | ref   | idx_uid               | idx_uid   | 4       | join_test_db.a.uid |    1 | Using index | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+-----------+---------+--------------------+------+-------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>很明显MySQL优化器乖乖的按照我们的引导将t_user_log设置成驱动表后使用logintime(logintime)索引在索引中完成排序动作，效率提升是非常明显的。17′41.87″ vs 0.14″，效率提升了7500倍+。</p>
+<p>这个案例说明了两件事：</p>
+<ol>
+<li><strong>一个是straight_join确实可以用来指定inner join的驱动表</strong></li>
+<li><strong>一个是关联查询驱动表选择非常重要</strong></li>
+</ol>
+<p>有一点需要注意的是：我们前面说要尽量缩小驱动表的结果集，但是这里却选择了一个超大表来做为驱动表，但其实两者是在一定程度上是不相悖的。因为缩小驱动表结果集实际上是为了减少nested loop的次数，而我们修改了驱动表以后，排序动作直接在索引完成，优化器直接按照logintime desc的顺序进行扫描，只要返回记录数等于100时就可以完成查询操作，实际的nested loop次数是很少的。而未修改前的SQL之所以需要执行那么久是因为它的排序无法使用索引，所以必须先等待临时结果集生成，而且是全量生成，也就是说需要在约3000万行的表里进行10万次查询，然后把结果聚集到一张临时表再进行排序选出100行记录。</p>
+<h2 id="通过缩小驱动表结果集来优化关联查询">通过缩小驱动表结果集来优化关联查询</h2>
+<p>还是上面的例子，这里我们用count(*)来做一次全表扫描的测试再看看驱动表应该怎么选。</p>
+<p><strong><em>test 3-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a straight_join t_user b on a.uid = b.uid ;          </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (16 min 57.25 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user b straight_join t_user_log a on a.uid = b.uid ;        </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (0.74 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a straight_join t_user b on a.uid = b.uid ;</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+----------+-------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key     | key_len | ref                | rows     | Extra       |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+----------+-------------+</div><div class="line">|  1 | SIMPLE      | a     | index | uid<span class="emphasis">_logintime,idx_</span>uid | idx<span class="emphasis">_uid | 4       | NULL               | 29345201 | Using index | </span></div><div class="line">|  1 | SIMPLE      | b     | ref   | idx_uid               | idx<span class="emphasis">_uid | 4       | join_</span>test<span class="emphasis">_db.a.uid |        1 | Using index | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+----------+-------------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user b straight_join t_user_log a on a.uid = b.uid ;        </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key     | key_len | ref                | rows   | Extra       |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line">|  1 | SIMPLE      | b     | index | idx<span class="emphasis">_uid               | idx_</span>uid | 4       | NULL               | 100105 | Using index | </div><div class="line"><span class="header">|  1 | SIMPLE      | a     | ref   | uid_logintime,idx_uid | idx_uid | 4       | join_test_db.b.uid |      5 | Using index | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>通过这个实验我们可以证明：驱动表结果集越小越好。</p>
+<h2 id="子查询说明">子查询说明</h2>
+<p>以下面四个SQL为例：</p>
+<ol>
+<li>第一个是我们正常的关联子查询的写法</li>
+<li>第二个是在MySQL5.6以前版本中SQL1的等价写法</li>
+<li>第三个是采用关联查询的优化写法</li>
+<li>第四个外连接改写关联子查询，等价于SQL3的内连接写法</li>
+</ol>
+<p><strong><em>test 4-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a where a.uid in (select uid from t_user);</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (0.81 sec)</div><div class="line"><span class="comment">// 在MySQL5.6以前的版本，MySQL优化器认为把外层表压到子查询中能够更高效的找到数据行，也就是等价于SQL2的写法</span></div><div class="line"><span class="comment">// 但是到MySQL5.6以及以后的版本中MySQL优化器则不是这么认为了，它们会自动按照关联查询的逻辑来执行关联子查询</span></div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a where exists (select uid from t_user b where a.uid = b.uid);               </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 34.70 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a inner join t_user b on a.uid = b.uid;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (0.82 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left  join t_user b on a.uid = b.uid where b.uid is not null;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (0.79 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a where a.uid in (select uid from t_user);</span></div><div class="line">+----+-------------+--------+-------+-----------------------+---------+---------+-------------------------+--------+------------------------+</div><div class="line"><span class="header">| id | select_type | table  | type  | possible_keys         | key     | key_len | ref                     | rows   | Extra                  |</span></div><div class="line">+----+-------------+--------+-------+-----------------------+---------+---------+-------------------------+--------+------------------------+</div><div class="line">|  1 | SIMPLE      | t<span class="emphasis">_user | index | idx_</span>uid               | idx<span class="emphasis">_uid | 4       | NULL                    | 100105 | Using index; LooseScan | </span></div><div class="line">|  1 | SIMPLE      | a      | ref   | uid_logintime,idx<span class="emphasis">_uid | idx_</span>uid | 4       | join<span class="emphasis">_test_</span>db.t<span class="emphasis">_user.uid |      5 | Using index            | </span></div><div class="line">+----+-------------+--------+-------+-----------------------+---------+---------+-------------------------+--------+------------------------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a where exists (select uid from t_user b where a.uid = b.uid);  </span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line"><span class="header">| id | select_type        | table | type  | possible_keys | key     | key_len | ref                | rows     | Extra                    |</span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line">|  1 | PRIMARY            | a     | index | NULL          | idx<span class="emphasis">_uid | 4       | NULL               | 29345201 | Using where; Using index | </span></div><div class="line">|  2 | DEPENDENT SUBQUERY | b     | ref   | idx_uid       | idx<span class="emphasis">_uid | 4       | join_</span>test<span class="emphasis">_db.a.uid |        1 | Using index              | </span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a inner join t_user b on a.uid = b.uid;</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key     | key_len | ref                | rows   | Extra       |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line">|  1 | SIMPLE      | b     | index | idx<span class="emphasis">_uid               | idx_</span>uid | 4       | NULL               | 100105 | Using index | </div><div class="line"><span class="header">|  1 | SIMPLE      | a     | ref   | uid_logintime,idx_uid | idx_uid | 4       | join_test_db.b.uid |      5 | Using index | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+-------------+</div><div class="line">2 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a left  join t_user b on a.uid = b.uid where b.uid is not null;</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+--------------------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys         | key     | key_len | ref                | rows   | Extra                    |</span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+--------------------------+</div><div class="line">|  1 | SIMPLE      | b     | index | idx<span class="emphasis">_uid               | idx_</span>uid | 4       | NULL               | 100105 | Using where; Using index | </div><div class="line"><span class="header">|  1 | SIMPLE      | a     | ref   | uid_logintime,idx_uid | idx_uid | 4       | join_test_db.b.uid |      5 | Using index              | </span></div><div class="line">+----+-------------+-------+-------+-----------------------+---------+---------+--------------------+--------+--------------------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>这里我们再来看看SQL1与SQL2在MySQL5.5版本中的效率已经执行计划</p>
+<p><strong><em>test 4-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a where a.uid in (select uid from t_user); </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 5.13 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a where exists (select uid from t_user b where a.uid = b.uid);   </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|  1172206 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 24.81 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a where a.uid in (select uid from t_user);</span></div><div class="line">+----+--------------------+--------+----------------+---------------+---------+---------+------+----------+--------------------------+</div><div class="line"><span class="header">| id | select_type        | table  | type           | possible_keys | key     | key_len | ref  | rows     | Extra                    |</span></div><div class="line">+----+--------------------+--------+----------------+---------------+---------+---------+------+----------+--------------------------+</div><div class="line">|  1 | PRIMARY            | a      | index          | NULL          | idx<span class="emphasis">_uid | 4       | NULL | 30736327 | Using where; Using index | </span></div><div class="line">|  2 | DEPENDENT SUBQUERY | t_user | index<span class="emphasis">_subquery | idx_</span>uid       | idx<span class="emphasis">_uid | 4       | func |        1 | Using index              | </span></div><div class="line">+----+--------------------+--------+----------------+---------------+---------+---------+------+----------+--------------------------+</div><div class="line">2 rows in set (0.01 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a where exists (select uid from t_user b where a.uid = b.uid);   </span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line"><span class="header">| id | select_type        | table | type  | possible_keys | key     | key_len | ref                | rows     | Extra                    |</span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line">|  1 | PRIMARY            | a     | index | NULL          | idx<span class="emphasis">_uid | 4       | NULL               | 30736327 | Using where; Using index | </span></div><div class="line">|  2 | DEPENDENT SUBQUERY | b     | ref   | idx_uid       | idx<span class="emphasis">_uid | 4       | join_</span>test<span class="emphasis">_db.a.uid |        1 | Using index              | </span></div><div class="line">+----+--------------------+-------+-------+---------------+---------+---------+--------------------+----------+--------------------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<h2 id="容易混淆的地方">容易混淆的地方</h2>
+<p>下面这两个SQL是等价的吗？</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">left</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">and</span> b.city = <span class="number">78</span>;</span> </div><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">left</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">where</span> b.city = <span class="number">78</span>;</span></div></pre></td></tr></table></figure>
+
+<p>答案是否定的，因为前者在匹配表中加了过滤条件，而后者在关联结果中加了过滤条件，前者不影响驱动表检索出来的数据（与匹配表无法匹配的数据依然会检索出来，只是匹配表字段部分值等于NULL），后者影响驱动表检索出来的数据（因为在结果集中直接被过滤掉了）。</p>
+<p><strong><em>test 5-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join t_user b on a.uid = b.uid and b.city = 78;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">| 30560213 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 6.83 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join t_user b on a.uid = b.uid where b.city = 78;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|    10009 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+
+<p>再看看这样的两个SQL等价吗？</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">left</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">where</span> b.city = <span class="number">78</span>;</span></div><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">inner</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">where</span> b.city = <span class="number">78</span>;</span></div></pre></td></tr></table></figure>
+
+<p>答案是肯定的，因为前者在关联结果中加了匹配表的过滤条件，后者是内关联等价于在关联结果中过滤数据，因此两者是等价的。<br>也就是在这种情况下MySQL优化器会认为：<strong>外关联等价于内关联，会由优化器自行选择驱动表，而不是直接以left join左边的t_user_log表作为驱动表。</strong></p>
+<p><strong><em>test 5-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">mysql&gt; explain select count(*) <span class="keyword">from</span> t_user_log a left join t_user b on a.uid = b.uid where b.city = <span class="number">78</span>;</div><div class="line">+----+-------------+-------+------+---------------------------+---------+---------+--------------------+------+--------------------------+</div><div class="line">| id | select_type | table | <span class="keyword">type</span> | possible_keys             | key     | key_len | <span class="keyword">ref</span>                | rows | <span class="type">Extra</span>                    |</div><div class="line">+----+-------------+-------+------+---------------------------+---------+---------+--------------------+------+--------------------------+</div><div class="line">|  <span class="number">1</span> | <span class="type">SIMPLE</span>      | b     | <span class="keyword">ref</span>  | idx_uid,idx_1,idx_2,idx_4 | idx_2   | <span class="number">1</span>       | <span class="keyword">const</span>              |  <span class="number">942</span> | <span class="type">Using</span> where; <span class="type">Using</span> index | </div><div class="line">|  <span class="number">1</span> | <span class="type">SIMPLE</span>      | a     | <span class="keyword">ref</span>  | uid_logintime,idx_uid     | idx_uid | <span class="number">4</span>       | join_test_db.b.uid |    <span class="number">5</span> | <span class="type">Using</span> index              | </div><div class="line">+----+-------------+-------+------+---------------------------+---------+---------+--------------------+------+--------------------------+</div><div class="line"><span class="number">2</span> rows <span class="keyword">in</span> <span class="type">set</span> (<span class="number">0</span>.<span class="number">00</span> sec)</div></pre></td></tr></table></figure>
+
+<p>接下来再看看这两个SQL是否等价。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">left</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">where</span> a.logintype = <span class="number">3</span>;</span>  </div><div class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> t_user_log a <span class="keyword">inner</span> <span class="keyword">join</span> t_user b <span class="keyword">on</span> a.uid = b.uid <span class="keyword">where</span> a.logintype = <span class="number">3</span>;</span></div></pre></td></tr></table></figure>
+
+<p>很多同学看了<strong><em>test 5-2</em></strong>的两个SQL是等价，自然也觉得<strong><em>test 5-3</em></strong>这两个SQL也是等价的。但是很遗憾，结果是不等价。</p>
+<p><strong><em>test 5-3</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join t_user b on a.uid = b.uid where a.logintype = 3;  </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">| 11461228 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (31.15 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a inner join t_user b on a.uid = b.uid where a.logintype = 3;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">|      170 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (47.63 sec)</div></pre></td></tr></table></figure>
+
+<p>因为这两个SQL都是在结果集中进行数据过滤，两者的结果集不同，因此过滤结果也可能不同，所以两个SQL是不等价的。<br>简单来说：<strong>关联查询where后面部分如果带有匹配表上的查询条件，那么这个外关联SQL可以等价于内关联SQL（匹配表.clo is null除外）。</strong></p>
+<h2 id="缩小匹配表结果集能达到优化的效果吗">缩小匹配表结果集能达到优化的效果吗</h2>
+<p>通过上面的一些说明与实验我们知道缩小驱动表的结果集能够优化连接查询，那么如果在驱动表的结果集无法缩小，且无法替换驱动表的情况下，通过所缩小匹配表的结果集能达到优化效果吗？</p>
+<p><strong><em>test 6-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join ( select * from t_user where city = 78 )b on a.uid = b.uid where b.id is null;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">| 30550204 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (23.16 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join t_user b on a.uid = b.uid and b.city = 78 where b.id is null;   </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">| 30550204 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 10.74 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a left join ( select * from t_user where city = 78 )b on a.uid = b.uid where b.id is null;</span></div><div class="line">+----+-------------+------------+-------+---------------+-------------+---------+--------------------+----------+-------------------------+</div><div class="line"><span class="header">| id | select_type | table      | type  | possible_keys | key         | key_len | ref                | rows     | Extra                   |</span></div><div class="line">+----+-------------+------------+-------+---------------+-------------+---------+--------------------+----------+-------------------------+</div><div class="line">|  1 | PRIMARY     | a          | index | NULL          | idx<span class="emphasis">_uid     | 4       | NULL               | 29345201 | Using index             | </span></div><div class="line">|  1 | PRIMARY     | &lt;derived2&gt; | ref   | &lt;auto_key1&gt;   | &lt;auto<span class="emphasis">_key1&gt; | 4       | join_</span>test<span class="emphasis">_db.a.uid |       15 | Using where; Not exists | </span></div><div class="line">|  2 | DERIVED     | t_user     | ref   | idx<span class="emphasis">_2,idx_</span>4   | idx<span class="emphasis">_2       | 1       | const              |      942 | NULL                    | </span></div><div class="line">+----+-------------+------------+-------+---------------+-------------+---------+--------------------+----------+-------------------------+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a left join t_user b on a.uid = b.uid and b.city = 78 where b.id is null;                         </span></div><div class="line">+----+-------------+-------+-------+---------------------------+---------+---------+--------------------+----------+-------------------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys             | key     | key_len | ref                | rows     | Extra                   |</span></div><div class="line">+----+-------------+-------+-------+---------------------------+---------+---------+--------------------+----------+-------------------------+</div><div class="line">|  1 | SIMPLE      | a     | index | NULL                      | idx<span class="emphasis">_uid | 4       | NULL               | 29345201 | Using index             | </span></div><div class="line">|  1 | SIMPLE      | b     | ref   | idx_uid,idx<span class="emphasis">_1,idx_</span>2,idx<span class="emphasis">_4 | idx_</span>uid | 4       | join<span class="emphasis">_test_</span>db.a.uid |        1 | Using where; Not exists | </div><div class="line"><span class="code">+----+</span>-------------<span class="code">+-------+</span>-------<span class="code">+---------------------------+</span>---------<span class="code">+---------+</span>--------------------<span class="code">+----------+</span>-------------------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>从执行计划上看第二个SQL应该比第一个SQL更优，但实际结果却是第一个SQL执行效率更高，原因也许就出在我暂时还不明白的<auto_key1>上，这个是MySQL5.6以后才出现的，放在My5.5及以前的版本中是没有的，自然执行的效率也是可以预见的非常非常低，下面是同样的SQL在MySQL5.5版本执行的结果。</auto_key1></p>
+<p><strong><em>test 6-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select count(<span class="strong">*) from t_user_log a left join ( select *</span> from t<span class="emphasis">_user where city = 78 )b on a.uid = b.uid where b.id is null;</span></div><div class="line">...</div><div class="line">// 执行超过10分钟还没出结果，直接被我X掉了</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select count(*) from t_user_log a left join t_user b on a.uid = b.uid and b.city = 78 where b.id is null;  </span></div><div class="line">+----------+</div><div class="line"><span class="header">| count(*) |</span></div><div class="line">+----------+</div><div class="line"><span class="header">| 30550204 | </span></div><div class="line">+----------+</div><div class="line">1 row in set (1 min 7.68 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select count(*) from t_user_log a left join ( select * from t_user where city = 78 )b on a.uid = b.uid where b.id is null;</span></div><div class="line">+----+-------------+------------+-------+----------------+---------+---------+------+----------+-------------------------+</div><div class="line"><span class="header">| id | select_type | table      | type  | possible_keys  | key     | key_len | ref  | rows     | Extra                   |</span></div><div class="line">+----+-------------+------------+-------+----------------+---------+---------+------+----------+-------------------------+</div><div class="line">|  1 | PRIMARY     | a          | index | NULL           | idx<span class="emphasis">_uid | 4       | NULL | 30736327 | Using index             | </span></div><div class="line">|  1 | PRIMARY     | &lt;derived2&gt; | ALL   | NULL           | NULL    | NULL    | NULL |      943 | Using where; Not exists | </div><div class="line">|  2 | DERIVED     | t_user     | ref   | idx<span class="emphasis">_city,idx_</span>2 | idx<span class="emphasis">_2   | 1       |      |      942 |                         | </span></div><div class="line">+----+-------------+------------+-------+----------------+---------+---------+------+----------+-------------------------+</div><div class="line">3 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; explain select  count(*) from t_user_log a left join t_user b on a.uid = b.uid and b.city = 78 where b.id is null;                        </span></div><div class="line">+----+-------------+-------+-------+------------------------+---------+---------+--------------------+----------+-------------------------+</div><div class="line"><span class="header">| id | select_type | table | type  | possible_keys          | key     | key_len | ref                | rows     | Extra                   |</span></div><div class="line">+----+-------------+-------+-------+------------------------+---------+---------+--------------------+----------+-------------------------+</div><div class="line">|  1 | SIMPLE      | a     | index | NULL                   | idx<span class="emphasis">_uid | 4       | NULL               | 30736327 | Using index             | </span></div><div class="line">|  1 | SIMPLE      | b     | ref   | idx_uid,idx<span class="emphasis">_city,idx_</span>2 | idx<span class="emphasis">_uid | 4       | join_</span>test<span class="emphasis">_db.a.uid |        1 | Using where; Not exists | </span></div><div class="line">+----+-------------+-------+-------+------------------------+---------+---------+--------------------+----------+-------------------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>果然如我们预料在MySQL5.5版本上SQL1执行的效率低的可怕，至于MySQL5.6上<strong>为什么缩小匹配表结果集能达到优化</strong>就等下回分解吧。</p>
+<h2 id="遗留问题">遗留问题</h2>
+<p>MySQL5.6确实有做了相关优化吗：<strong>缩小匹配表结果集能达到优化关联查询</strong>？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/09/25/separate_table/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[MySQL案例]之Discuz大表拆分</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="join-query-in-mysql" data-title="[MySQL基础篇]之连接查询" data-url="http://myrock.github.io/2014/09/26/join-query-in-mysql/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-right">
+    		&copy; 2014 林晓嘉
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>

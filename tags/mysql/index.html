@@ -114,6 +114,70 @@
 </nav>
       
   
+    <article id="post-join-query-in-mysql" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/26/join-query-in-mysql/" class="article-date">
+  	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/26/join-query-in-mysql/">[MySQL基础篇]之连接查询</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问题，要怎么做才能做到最优查询。</p>
+<h2 id="重点说在前面">重点说在前面</h2>
+<ol>
+<li>MySQL对表连接至今只支持nested loop join，而不支持hash join，这个是MySQL不建议执行复杂关联查询的根源（MariaDB已经实现hash join）<blockquote>
+<p>通过驱动表的结果集作为循环基础数据，然后一条一条地通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。</p>
+</blockquote>
+</li>
+<li>优化的目标是尽可能减少关联查询中nested loop的循环次数，也就是说尽量缩小驱动表的结果集</li>
+<li>inner join驱动顺序由优化器自己指定，如果优化器选择有误可以使用straight_join自己指定驱动顺序以达到优化的目的</li>
+<li>left join驱动顺序是固定的，left join左边的表为驱动表，右边为匹配表，RIGHT JOIN则刚好相反<blockquote>
+<p>其实这也不是绝对的，当left join跟inner join等价的时候，MySQL优化器就会自己选择驱动表，需求请见下文“容易混淆的地方”部分</p>
+</blockquote>
+</li>
+<li>存在group by或者order by子句的关联查询中，如果引用的字段是驱动表的字段那么分组或者排序是可以使用索引的，如果引用的是其他匹配表的字段，那边分组或者排序动作则无法使用索引</li>
+<li>在MySQL5.6以前的版本关联子查询可以用关联查询来替代优化（MySQL5.6或者更新的版本或者MariaDB等就无需替代，优化器会自动帮你优化处理）</li>
+</ol>
+
+        
+          <p class="article-more-link">
+            <a href="/2014/09/26/join-query-in-mysql/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-separate_table" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
