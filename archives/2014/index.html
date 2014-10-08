@@ -252,7 +252,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/24/in_and_range/">[MySQL案例]之in与range查询</a>
+      <a class="article-title" href="/2014/09/24/in_and_range/">[MySQL基础篇]之in与range查询</a>
     </h1>
   
 
@@ -264,7 +264,25 @@
 <blockquote>
 <p>老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查询优化可能需要花很多时间，并消耗大量内存。新版本MySQL在组合数超过一定的数量就不进行计划评估了，这可能导致MySQL不能很好的利用索引。</p>
 </blockquote>
-<p>因为我也不知道也找不到这里的“一定数量”是多少，因此我一直在跟大家伙说in一定要少，最好少于10个，不要出现两个in，即便出现了乘积必须小于20。说到底我一直认为少量的in()是木有问题的，索引都是可以走的，一直到今天优化了一个SQL。</p>
+<p>这里的“一定数量”在MySQL5.6.5以及以后的版本中是由eq_range_index_dive_limit这个参数控制（感谢<a href="http://imysql.com" target="_blank" rel="external">@叶金荣</a>同学的指点）。默认设置是10，一直到5.7以后的版本默认会修改成200，当然我们是可以手动设置的。我们看下5.6手册中的说明：</p>
+<blockquote>
+<p>The eq_range_index_dive_limit system variable enables you to configure the number of values at which the optimizer switches from one row estimation strategy to the other. To disable use of statistics and always use index dives, set eq_range_index_dive_limit to 0. To permit use of index dives for comparisons of up to N equality ranges, set eq_range_index_dive_limit to N + 1.<br>eq_range_index_dive_limit is available as of MySQL 5.6.5. Before 5.6.5, the optimizer uses index dives, which is equivalent to eq_range_index_dive_limit=0.</p>
+</blockquote>
+<p>也就是说：</p>
+<pre><code><span class="number">1</span>. eq_range_index_dive_limit = <span class="number">0</span> 只能使用<span class="built_in">index</span> dive
+<span class="number">2</span>. <span class="number">0</span> &lt; eq_range_index_dive_limit &lt;= <span class="keyword">N</span> 使用<span class="built_in">index</span> statistics
+<span class="number">3</span>. eq_range_index_dive_limit &gt; <span class="keyword">N</span> 只能使用<span class="built_in">index</span> dive
+</code></pre><p>index dive与index statistics是MySQL优化器对开销代价的估算方法，前者速度慢但是能得到精准的值，后者速度快但是数据未必精准。</p>
+<blockquote>
+<p>the optimizer can estimate the row count for each range using dives into the index or index statistics.</p>
+</blockquote>
+<p>在MySQL5.7版本中将默认值从10修改成200目的是为了尽可能的保证范围等值运算（IN()）执行计划尽量精准，因为IN()list的数量很多时候都是超过10的。</p>
+<h2 id="说在前面">说在前面</h2>
+<p>今天文章的主题有两个：</p>
+<ol>
+<li>range查询与索引使用</li>
+<li>eq_range_index_dive_limit的说明</li>
+</ol>
 
         
           <p class="article-more-link">
