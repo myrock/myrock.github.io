@@ -60,13 +60,9 @@
 					
 						<li><a href="/">HOME</a></li>
 			        
-						<li><a href="/tags/database">DATABASE</a></li>
+						<li><a href="/archives">ALL TITLE</a></li>
 			        
-						<li><a href="/tags/linux">LINUX</a></li>
-			        
-						<li><a href="/tags/other">Other Technology</a></li>
-			        
-						<li><a href="/tags/life">LIFE</a></li>
+						<li><a href="/aboutme">ABOUT</a></li>
 			        
 					</ul>
 				</nav>
@@ -112,13 +108,9 @@
 				
 					<li><a href="/">HOME</a></li>
 		        
-					<li><a href="/tags/database">DATABASE</a></li>
+					<li><a href="/archives">ALL TITLE</a></li>
 		        
-					<li><a href="/tags/linux">LINUX</a></li>
-		        
-					<li><a href="/tags/other">Other Technology</a></li>
-		        
-					<li><a href="/tags/life">LIFE</a></li>
+					<li><a href="/aboutme">ABOUT</a></li>
 		        
 		        <div class="clearfix"></div>
 				</ul>
@@ -137,142 +129,69 @@
 </nav>
       
   
-    <article id="post-join-query-in-mysql" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="/2014/09/26/join-query-in-mysql/" class="article-date">
-  	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26 2014</time>
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2014" class="archive-year">2014</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2014/09/26/join-query-in-mysql/" class="archive-article-date">
+  	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26</time>
 </a>
-      
-      
+	      	<br>
+	      	
+	    	
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
 
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+    	</div>
+    	
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/26/join-query-in-mysql/">[MySQL基础篇]之连接查询</a>
+      <a class="archive-article-title" href="/2014/09/26/join-query-in-mysql/">[MySQL基础篇]之连接查询</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问题，要怎么做才能做到最优查询。</p>
-<h2 id="重点说在前面">重点说在前面</h2>
-<ol>
-<li>MySQL对表连接至今只支持nested loop join，而不支持hash join，这个是MySQL不建议执行复杂关联查询的根源（MariaDB已经实现hash join）<blockquote>
-<p>通过驱动表的结果集作为循环基础数据，然后一条一条地通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。</p>
-</blockquote>
-</li>
-<li>优化的目标是尽可能减少关联查询中nested loop的循环次数，也就是说尽量缩小驱动表的结果集</li>
-<li>inner join驱动顺序由优化器自己指定，如果优化器选择有误可以使用straight_join自己指定驱动顺序以达到优化的目的</li>
-<li>left join驱动顺序是固定的，left join左边的表为驱动表，右边为匹配表，RIGHT JOIN则刚好相反<blockquote>
-<p>其实这也不是绝对的，当left join跟inner join等价的时候，MySQL优化器就会自己选择驱动表，需求请见下文“容易混淆的地方”部分</p>
-</blockquote>
-</li>
-<li>存在group by或者order by子句的关联查询中，如果引用的字段是驱动表的字段那么分组或者排序是可以使用索引的，如果引用的是其他匹配表的字段，那边分组或者排序动作则无法使用索引</li>
-<li>在MySQL5.6以前的版本关联子查询可以用关联查询来替代优化（MySQL5.6或者更新的版本或者MariaDB等就无需替代，优化器会自动帮你优化处理）</li>
-<li>在MySQL5.6以及以后的版本中，缩小匹配表的结果集也能达到优化的效果</li>
-</ol>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/26/join-query-in-mysql/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
+    </header>
   </div>
-  
 </article>
-
-
-
-
-
-
   
-    <article id="post-in_and_range" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/24/in_and_range/" class="article-date">
-  	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24 2014</time>
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2014/09/24/in_and_range/" class="archive-article-date">
+  	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24</time>
 </a>
-      
-      
+	      	<br>
+	      	
+	    	
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
 
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+    	</div>
+    	
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/24/in_and_range/">[MySQL基础篇]之in与range查询</a>
+      <a class="archive-article-title" href="/2014/09/24/in_and_range/">[MySQL基础篇]之in与range查询</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：</p>
-<blockquote>
-<p>老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查询优化可能需要花很多时间，并消耗大量内存。新版本MySQL在组合数超过一定的数量就不进行计划评估了，这可能导致MySQL不能很好的利用索引。</p>
-</blockquote>
-<p>这里的“一定数量”在MySQL5.6.5以及以后的版本中是由eq_range_index_dive_limit这个参数控制（感谢<a href="http://imysql.com" target="_blank" rel="external">@叶金荣</a>同学的指点）。默认设置是10，一直到5.7以后的版本默认会修改成200，当然我们是可以手动设置的。我们看下5.6手册中的说明：</p>
-<blockquote>
-<p>The eq_range_index_dive_limit system variable enables you to configure the number of values at which the optimizer switches from one row estimation strategy to the other. To disable use of statistics and always use index dives, set eq_range_index_dive_limit to 0. To permit use of index dives for comparisons of up to N equality ranges, set eq_range_index_dive_limit to N + 1.<br>eq_range_index_dive_limit is available as of MySQL 5.6.5. Before 5.6.5, the optimizer uses index dives, which is equivalent to eq_range_index_dive_limit=0.</p>
-</blockquote>
-<p>也就是说：</p>
-<pre><code><span class="number">1</span>. eq_range_index_dive_limit = <span class="number">0</span> 只能使用<span class="built_in">index</span> dive
-<span class="number">2</span>. <span class="number">0</span> &lt; eq_range_index_dive_limit &lt;= <span class="keyword">N</span> 使用<span class="built_in">index</span> statistics
-<span class="number">3</span>. eq_range_index_dive_limit &gt; <span class="keyword">N</span> 只能使用<span class="built_in">index</span> dive
-</code></pre><p>index dive与index statistics是MySQL优化器对开销代价的估算方法，前者速度慢但是能得到精准的值，后者速度快但是数据未必精准。</p>
-<blockquote>
-<p>the optimizer can estimate the row count for each range using dives into the index or index statistics.</p>
-</blockquote>
-<p>在MySQL5.7版本中将默认值从10修改成200目的是为了尽可能的保证范围等值运算（IN()）执行计划尽量精准，因为IN()list的数量很多时候都是超过10的。</p>
-<h2 id="说在前面">说在前面</h2>
-<p>今天文章的主题有两个：</p>
-<ol>
-<li>range查询与索引使用</li>
-<li>eq_range_index_dive_limit的说明</li>
-</ol>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/24/in_and_range/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
+    </header>
   </div>
-  
 </article>
-
-
-
-
-
-
   
+  
+    </div></section>
   
 
       <footer id="footer">
