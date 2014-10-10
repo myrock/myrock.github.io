@@ -293,7 +293,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <pre><code><span class="number">1</span>. eq_range_index_dive_limit = <span class="number">0</span> 只能使用<span class="built_in">index</span> dive
 <span class="number">2</span>. <span class="number">0</span> &lt; eq_range_index_dive_limit &lt;= <span class="keyword">N</span> 使用<span class="built_in">index</span> statistics
 <span class="number">3</span>. eq_range_index_dive_limit &gt; <span class="keyword">N</span> 只能使用<span class="built_in">index</span> dive
-</code></pre><p>index dive与index statistics是MySQL优化器对开销代价的估算方法，前者速度慢但是能得到精准的值，后者速度快但是数据未必精准。</p>
+</code></pre><p>index dive与index statistics是MySQL优化器对开销代价的估算方法，前者统计速度慢但是能得到精准的值，后者统计速度快但是数据未必精准。</p>
 <blockquote>
 <p>the optimizer can estimate the row count for each range using dives into the index or index statistics.</p>
 </blockquote>
