@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>HiDBA | 林晓嘉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="title: [Linux����ƪ]֮�ڴ�����һ����date: 2014-10-09 15:42:49
+tags: [linux]
+��������zabbix�ķ�������Դ���ݼ���ʱ��Linux�����ڴ��㷨����һЩ�ɻ��������㷨�������ģ�
+1available = inactive + cached + free memory
+
+zabbix�">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HiDBA | 林晓嘉">
+<meta property="og:url" content="http://hidba.tk/2014/10/09/memory-in-linux/">
+<meta property="og:site_name" content="HiDBA | 林晓嘉">
+<meta property="og:description" content="title: [Linux����ƪ]֮�ڴ�����һ����date: 2014-10-09 15:42:49
+tags: [linux]
+��������zabbix�ķ�������Դ���ݼ���ʱ��Linux�����ڴ��㷨����һЩ�ɻ��������㷨�������ģ�
+1available = inactive + cached + free memory
+
+zabbix�">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HiDBA | 林晓嘉">
+<meta name="twitter:description" content="title: [Linux����ƪ]֮�ڴ�����һ����date: 2014-10-09 15:42:49
+tags: [linux]
+��������zabbix�ķ�������Դ���ݼ���ʱ��Linux�����ڴ��㷨����һЩ�ɻ��������㷨�������ģ�
+1available = inactive + cached + free memory
+
+zabbix�">
+
+  
+    <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Technology change our life.</p>
+		
+
+		
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+			    <label class="onoffswitch-label" for="myonoffswitch">
+			        <span class="onoffswitch-inner"></span>
+			        <span class="onoffswitch-switch"></span>
+			    </label>
+			</div>
+		
+
+		<div class="switch-area">
+			<section class="first-part">
+				<nav class="header-menu">
+					<ul>
+					
+						<li><a href="/">HOME</a></li>
+			        
+						<li><a href="/archives">ARCHIVES</a></li>
+			        
+						<li><a href="/aboutme">ABOUT</a></li>
+			        
+					</ul>
+				</nav>
+				<nav class="header-nav">
+					<div class="social">
+						
+							<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+				        
+							<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+				        
+					</div>
+				</nav>
+			</section>
+			
+			
+			<section class="second-part">
+				<div class="widget tagcloud">
+					<a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/mysql/" style="font-size: 20.00px;">mysql</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
+				</div>
+			</section>
+			
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Technology change our life.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">HOME</a></li>
+		        
+					<li><a href="/archives">ARCHIVES</a></li>
+		        
+					<li><a href="/aboutme">ABOUT</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-memory-in-linux" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/10/09/memory-in-linux/" class="article-date">
+  	<time datetime="2014-10-09T07:42:49.000Z" itemprop="datePublished">10月 9 2014</time>
+</a>
+      
+      
+    </div>
+  
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: [Linux����ƪ]֮�ڴ�����һ����<br>date: 2014-10-09 15:42:49</p>
+<h2 id="tags:_[linux]">tags: [linux]</h2>
+<p>��������zabbix�ķ�������Դ���ݼ���ʱ��Linux�����ڴ��㷨����һЩ�ɻ��������㷨�������ģ�</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">available </span>=<span class="string"> inactive + cached + free memory</span></div></pre></td></tr></table></figure>
+
+<p>zabbix���������Ľ����ǣ���Ϊinactive, cached, free����������ֱ�ӷ��������������Ա�����Ϊavailable��</p>
+<p>[ 15:55:21-root@fzck-10-59-109-11:~ ]#free -m;vmstat -a<br>             total       used       free     shared    buffers     cached<br>Mem:         32143      13593      18550          0        136      12205<br>-/+ buffers/cache:       1251      30892<br>Swap:        31996         38      31957<br>procs —————-memory————— —-swap— ——-io—— —system— ——-cpu———<br> r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st<br> 0  0  39680 18995392 3124248 10451812    0    0     4     8    0    0  0  0 100  0  0<br>[ 15:55:29-root@fzck-10-59-109-11:~ ]#echo 3 &gt; /proc/sys/vm/drop_caches<br>[ 15:55:50-root@fzck-10-59-109-11:~ ]#free -m;vmstat -a<br>             total       used       free     shared    buffers     cached<br>Mem:         32143       8667      23475          0          0       7608<br>-/+ buffers/cache:       1058      31085<br>Swap:        31996         38      31957<br>procs —————-memory————— —-swap— ——-io—— —system— ——-cpu———<br> r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st<br> 0  0  39680 24039496   2200 8727620    0    0     4     8    0    0  0  0 100  0  0</p>
+<p> [ 15:33:10-root@fzck-10-59-105-12:~ ]#free -m<br>             total       used       free     shared    buffers     cached<br>Mem:         48255       7067      41188          0        241       6344<br>-/+ buffers/cache:        481      47774<br>Swap:        20481          0      20481<br>[ 15:33:12-root@fzck-10-59-105-12:~ ]#vmstat -a<br>procs —————-memory————— —-swap— ——-io—— —system— ——-cpu———<br> r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st<br> 0  0      0 42176468 5018416 1825584    0    0     0     1    0    0  0  0 100  0  0<br>[ 15:33:14-root@fzck-10-59-105-12:~ ]#cat /etc/sys<br>sysconfig/    sysctl.conf   sysctl.ktune  syslog.conf   systemtap/<br>[ 15:33:14-root@fzck-10-59-105-12:~ ]#cat /proc/sys/vm/drop_caches<br>0<br>[ 15:33:32-root@fzck-10-59-105-12:~ ]#synv<br>-bash: synv: command not found<br>[ 15:33:36-root@fzck-10-59-105-12:~ ]#sync<br>[ 15:33:38-root@fzck-10-59-105-12:~ ]#sync;echo 3 &gt; /proc/sys/vm/drop_caches;echo 0 &gt; /proc/sys/vm/drop_caches;<br>[ 15:34:01-root@fzck-10-59-105-12:~ ]#<br>[ 15:34:01-root@fzck-10-59-105-12:~ ]#<br>[ 15:34:02-root@fzck-10-59-105-12:~ ]#<br>[ 15:34:02-root@fzck-10-59-105-12:~ ]#free -m ; vmstat -a<br>             total       used       free     shared    buffers     cached<br>Mem:         48255        360      47895          0          0        162<br>-/+ buffers/cache:        197      48058<br>Swap:        20481          0      20481<br>procs —————-memory————— —-swap— ——-io—— —system— ——-cpu———<br> r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st<br> 0  0      0 49045256   3984 262416    0    0     0     1    0    0  0  0 100  0  0<br>[ 15:34:05-root@fzck-10-59-105-12:~ ]#free -m ; vmstat -a<br>             total       used       free     shared    buffers     cached<br>Mem:         48255        356      47898          0          2        165<br>-/+ buffers/cache:        189      48066<br>Swap:        20481          0      20481<br>procs —————-memory————— —-swap— ——-io—— —system— ——-cpu———<br> r  b   swpd   free  inact active   si   so    bi    bo   in   cs us sy id wa st<br> 0  0      0 49048444   6160 265324    0    0     0     1    0    0  0  0 100  0  0<br>[ 15:42:03-root@fzck-10-59-105-12:~ ]#</p>
+<p><a href="http://blog.zabbix.com/when-alexei-isnt-looking/#vm.memory.size" target="_blank" rel="external">http://blog.zabbix.com/when-alexei-isnt-looking/#vm.memory.size</a><br><a href="http://serverfault.com/questions/23433/in-linux-what-is-the-difference-between-buffers-and-cache-reported-by-the-f" target="_blank" rel="external">http://serverfault.com/questions/23433/in-linux-what-is-the-difference-between-buffers-and-cache-reported-by-the-f</a><br><a href="http://www.tldp.org/LDP/sag/html/buffer-cache.html" target="_blank" rel="external">http://www.tldp.org/LDP/sag/html/buffer-cache.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/09/26/join-query-in-mysql/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[MySQL基础篇]之连接查询</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="memory-in-linux" data-title="" data-url="http://hidba.tk/2014/10/09/memory-in-linux/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"HiDBA"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-right">
+    		&copy; 2014 林晓嘉
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+  <script src="/js/main.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>
