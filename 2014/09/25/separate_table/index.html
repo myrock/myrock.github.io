@@ -217,7 +217,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <h2 id="修改数据库配置">修改数据库配置</h2>
 <p>后面就是InnoDB的天下了，MyISAM从此退出江湖，所以要修改下buffer。另外加大max_allowed_packet是怕有的单个outfile文件的value过大，以防万一（刚好前几天因为max_allowed_packet设置的问题导致一个数据库恢复测试失败，这次还是小心为上）。</p>
 <h2 id="数据导入">数据导入</h2>
-<p>也没什么好说的，一样写个脚本开了5个并发进程在写数据，需要一说的的是新表多了一个自增ID，因此load的时候需要把新表除了新ID以外的所有字段名写上，费了点功夫。</p>
+<p>也没什么好说的，一样写个脚本开了5个并发进程在写数据，可以关闭binlog加速数据加载。需要一说的的是新表多了一个自增ID，因此load的时候需要把新表除了新ID以外的所有字段名写上，费了点功夫。</p>
+<p>!(<a href="http://image-myrock-github-io.qiniudn.com/load_data_vs.jpg" target="_blank" rel="external">http://image-myrock-github-io.qiniudn.com/load_data_vs.jpg</a>)</p>
 <h1 id="总结">总结</h1>
 <p>这个discuz数据库的帖子表总共约72G+的数据文件+索引文件，约一亿四千万行数据，我们分四个数据库节点并行操作，预计需要花近3个小时才能完成分表操作（不包含前期准备/备份，后期测试等等部分耗时）。<br>中间主要是通过tmpfs加速导出，并行执行加速导出导入操作，最终结果尚可接受，但还存在优化空间。</p>
 <h1 id="后续">后续</h1>
