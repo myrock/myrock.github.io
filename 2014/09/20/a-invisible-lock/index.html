@@ -8,7 +8,7 @@
   <meta name="description" content="昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在proc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL案例]之一把看不见的锁">
-<meta property="og:url" content="http://hidba.tk/2014/09/20/a_invisible_lock/">
+<meta property="og:url" content="http://hidba.tk/2014/09/20/a-invisible-lock/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
 <meta property="og:description" content="昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在proc">
 <meta name="twitter:card" content="summary">
@@ -133,10 +133,10 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 		</header>				
 	</div>
 </nav>
-      <article id="post-a_invisible_lock" class="article article-type-post" itemscope itemprop="blogPost">
+      <article id="post-a-invisible-lock" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2014/09/20/a_invisible_lock/" class="article-date">
+      <a href="/2014/09/20/a-invisible-lock/" class="article-date">
   	<time datetime="2014-09-20T15:52:51.000Z" itemprop="datePublished">9月 20 2014</time>
 </a>
       
@@ -222,7 +222,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
 <nav id="article-nav">
   
-    <a href="/2014/09/22/recover_be_killed/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/09/22/recover-be-killed/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
@@ -262,7 +262,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="a_invisible_lock" data-title="[MySQL案例]之一把看不见的锁" data-url="http://hidba.tk/2014/09/20/a_invisible_lock/"></div>
+	<div class="ds-thread" data-thread-key="a-invisible-lock" data-title="[MySQL案例]之一把看不见的锁" data-url="http://hidba.tk/2014/09/20/a-invisible-lock/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
