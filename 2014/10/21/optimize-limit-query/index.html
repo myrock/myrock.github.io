@@ -3,17 +3,32 @@
 <head>
   <meta charset="utf-8">
   
-  <title>HiDBA | 林晓嘉</title>
+  <title>[MySQL SQL优化系列]之分页查询 | HiDBA | 林晓嘉</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="林晓嘉 | 博客 | 数据库 | DBA | mysql | bi | 大数据">
-<meta property="og:type" content="website">
-<meta property="og:title" content="HiDBA | 林晓嘉">
-<meta property="og:url" content="http://hidba.tk/">
+  <meta name="description" content="记得在很久以前我在公司内部做过一次MySQL优化分享里面说到一个使用延迟关联实现排序分页类型SQL的优化，这个案例在《高性能MySQL》的第二版还是第三版也有提及。
+
+延迟关联：通过覆盖索引返回所需数据行的主键，再通过主键获取所需数据。
+
+这里我们来看一个使用延迟关联优化排序分页SQL的案例：
+123456789101112131415mysql&gt; select sql_no_cache *">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MySQL SQL优化系列]之分页查询">
+<meta property="og:url" content="http://hidba.tk/2014/10/21/optimize-limit-query/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
-<meta property="og:description" content="林晓嘉 | 博客 | 数据库 | DBA | mysql | bi | 大数据">
+<meta property="og:description" content="记得在很久以前我在公司内部做过一次MySQL优化分享里面说到一个使用延迟关联实现排序分页类型SQL的优化，这个案例在《高性能MySQL》的第二版还是第三版也有提及。
+
+延迟关联：通过覆盖索引返回所需数据行的主键，再通过主键获取所需数据。
+
+这里我们来看一个使用延迟关联优化排序分页SQL的案例：
+123456789101112131415mysql&gt; select sql_no_cache *">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HiDBA | 林晓嘉">
-<meta name="twitter:description" content="林晓嘉 | 博客 | 数据库 | DBA | mysql | bi | 大数据">
+<meta name="twitter:title" content="[MySQL SQL优化系列]之分页查询">
+<meta name="twitter:description" content="记得在很久以前我在公司内部做过一次MySQL优化分享里面说到一个使用延迟关联实现排序分页类型SQL的优化，这个案例在《高性能MySQL》的第二版还是第三版也有提及。
+
+延迟关联：通过覆盖索引返回所需数据行的主键，再通过主键获取所需数据。
+
+这里我们来看一个使用延迟关联优化排序分页SQL的案例：
+123456789101112131415mysql&gt; select sql_no_cache *">
 
   
     <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
@@ -133,9 +148,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 		</header>				
 	</div>
 </nav>
-      
-  
-    <article id="post-optimize-limit-query" class="article article-type-post" itemscope itemprop="blogPost">
+      <article id="post-optimize-limit-query" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2014/10/21/optimize-limit-query/" class="article-date">
@@ -152,8 +165,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/10/21/optimize-limit-query/">[MySQL SQL优化系列]之分页查询</a>
+    <h1 class="article-title" itemprop="name">
+      [MySQL SQL优化系列]之分页查询
     </h1>
   
 
@@ -207,367 +220,59 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     </footer>
   </div>
   
-</article>
-
-
-
-
-
-
-  
-    <article id="post-join-query-in-mysql" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/26/join-query-in-mysql/" class="article-date">
-  	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
     
-      <header class="article-header">
-        
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/26/join-query-in-mysql/">[MySQL SQL优化系列]之连接查询</a>
-    </h1>
   
+    <a href="/2014/09/26/join-query-in-mysql/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[MySQL SQL优化系列]之连接查询</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问题，要怎么做才能做到最优查询。</p>
-<h2 id="重点说在前面">重点说在前面</h2>
-<ol>
-<li>MySQL对表连接至今只支持nested loop join，而不支持hash join，这个是MySQL不建议执行复杂关联查询的根源（MariaDB已经实现hash join）<blockquote>
-<p>通过驱动表的结果集作为循环基础数据，然后一条一条地通过该结果集中的数据作为过滤条件到下一个表中查询数据，然后合并结果。</p>
-</blockquote>
-</li>
-<li>优化的目标是尽可能减少关联查询中nested loop的循环次数，也就是说尽量缩小驱动表的结果集</li>
-<li>inner join驱动顺序由优化器自己指定，如果优化器选择有误可以使用straight_join自己指定驱动顺序以达到优化的目的</li>
-<li>left join驱动顺序是固定的，left join左边的表为驱动表，右边为匹配表，RIGHT JOIN则刚好相反<blockquote>
-<p>其实这也不是绝对的，当left join跟inner join等价的时候，MySQL优化器就会自己选择驱动表，需求请见下文“容易混淆的地方”部分</p>
-</blockquote>
-</li>
-<li>存在group by或者order by子句的关联查询中，如果引用的字段是驱动表的字段那么分组或者排序是可以使用索引的，如果引用的是其他匹配表的字段，那边分组或者排序动作则无法使用索引</li>
-<li>在MySQL5.6以前的版本关联子查询可以用关联查询来替代优化（MySQL5.6或者更新的版本或者MariaDB等就无需替代，优化器会自动帮你优化处理）</li>
-<li>在MySQL5.6以及以后的版本中，缩小匹配表的结果集也能达到优化的效果</li>
-</ol>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/26/join-query-in-mysql/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
   
 </article>
 
 
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
 
 
 
-
-  
-    <article id="post-separate-table" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/25/separate-table/" class="article-date">
-  	<time datetime="2014-09-25T12:19:18.000Z" itemprop="datePublished">9月 25 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/25/separate-table/">[MySQL案例]之Discuz大表拆分</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="背景">背景</h1>
-<p>相信很多用discuz搭建论坛服务的同学都有这个体验，整个数据库表都是MyISAM引擎，一旦帖子数量到一定量级的时候神马操作都是巨慢无比（MyISAM的各种缺点这里暂且不提）。以此为背景，我们打算对discuz论坛进行改版，简单说来就是彻底抛弃原有的归档功能直接分100张表，按照帖子ID取模分发数据，然后把新表都改成InnoDB引擎。</p>
-<p>以这件事为背景，对这次升级过程中数据库的操作做一个记录以及简单分析。抛开前期准备，后期处理等等步骤，这里我们就说下中间的重要环节。</p>
-<blockquote>
-<p>1.在帖子表里面新增一个字段，且加一条索引<br>2.更新新增字段的值为：mod(tid,100)+1<br>3.创建一个tempfs分区（需要比帖子表.MYD文件大）<br>4.使用select into oufile并发导出数据<br>5.增大innodb_buffer_pool_size,max_allowed_packet，缩小key_buffer_size<br>6.使用load data infile并发导入数据</p>
-</blockquote>
-<p>中间的数据分表的核心步骤大概就是这么几步，下来我们逐一来讲。</p>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/25/separate-table/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="optimize-limit-query" data-title="[MySQL SQL优化系列]之分页查询" data-url="http://hidba.tk/2014/10/21/optimize-limit-query/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"HiDBA"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
 
 
 
-
-
-
-  
-    <article id="post-in-and-range" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/24/in-and-range/" class="article-date">
-  	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/24/in-and-range/">[MySQL SQL优化系列]之in与range查询</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：</p>
-<blockquote>
-<p>老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查询优化可能需要花很多时间，并消耗大量内存。新版本MySQL在组合数超过一定的数量就不进行计划评估了，这可能导致MySQL不能很好的利用索引。</p>
-</blockquote>
-<p>这里的“一定数量”在MySQL5.6.5以及以后的版本中是由eq_range_index_dive_limit这个参数控制（感谢<a href="http://imysql.com" target="_blank" rel="external">@叶金荣</a>同学的指点）。默认设置是10，一直到5.7以后的版本默认会修改成200，当然我们是可以手动设置的。我们看下5.6手册中的说明：</p>
-<blockquote>
-<p>The eq_range_index_dive_limit system variable enables you to configure the number of values at which the optimizer switches from one row estimation strategy to the other. To disable use of statistics and always use index dives, set eq_range_index_dive_limit to 0. To permit use of index dives for comparisons of up to N equality ranges, set eq_range_index_dive_limit to N + 1.<br>eq_range_index_dive_limit is available as of MySQL 5.6.5. Before 5.6.5, the optimizer uses index dives, which is equivalent to eq_range_index_dive_limit=0.</p>
-</blockquote>
-<p>也就是说：</p>
-<pre><code><span class="number">1</span>. eq_range_index_dive_limit = <span class="number">0</span> 只能使用<span class="built_in">index</span> dive
-<span class="number">2</span>. <span class="number">0</span> &lt; eq_range_index_dive_limit &lt;= <span class="keyword">N</span> 使用<span class="built_in">index</span> statistics
-<span class="number">3</span>. eq_range_index_dive_limit &gt; <span class="keyword">N</span> 只能使用<span class="built_in">index</span> dive
-</code></pre><p>index dive与index statistics是MySQL优化器对开销代价的估算方法，前者统计速度慢但是能得到精准的值，后者统计速度快但是数据未必精准。</p>
-<blockquote>
-<p>the optimizer can estimate the row count for each range using dives into the index or index statistics.</p>
-</blockquote>
-<p>在MySQL5.7版本中将默认值从10修改成200目的是为了尽可能的保证范围等值运算（IN()）执行计划尽量精准，因为IN()list的数量很多时候都是超过10的。</p>
-<h2 id="说在前面">说在前面</h2>
-<p>今天文章的主题有两个：</p>
-<ol>
-<li>range查询与索引使用</li>
-<li>eq_range_index_dive_limit的说明</li>
-</ol>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/24/in-and-range/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
-    <article id="post-recover-be-killed" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/22/recover-be-killed/" class="article-date">
-  	<time datetime="2014-09-22T03:23:12.000Z" itemprop="datePublished">9月 22 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/22/recover-be-killed/">[MySQL案例]之恢复进程莫名被杀</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天上班就发现一起数据库例行恢复作业失败，失败提示为：“数据库恢复失败”，也就是说是在执行mysql &lt; dumpfile的时候失败了。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[ root@localhost ]#<span class="regexp">/usr/</span>local<span class="regexp">/mysql56/</span>bin<span class="regexp">/mysql -S ./m</span>ysql.sock bi_monitor &lt; <span class="regexp">/home/m</span>ysql<span class="regexp">/backup/</span><span class="number">2014</span>-<span class="number">09</span>-<span class="number">21</span>_bi_monitor_3346.sql </div><div class="line">ERROR <span class="number">2006</span> (HY000) at line <span class="number">294</span>: MySQL server has gone away</div></pre></td></tr></table></figure>
-
-<p>MySQL server has gone away是指客户端与MySQL服务端之间的连接段开，一般来说原因有这么几个：</p>
-<ol>
-<li>MySQL crash：MySQL Server宕机</li>
-<li>connection timeout：客户端连接超时</li>
-<li>kill connection：连接进程被杀，与connection timeout差不多，区别在于一个是MySQL Server主动，一个是被动</li>
-<li>max_allowed_packet too small：返回结果集大于max_allowed_packet限制</li>
-</ol>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/22/recover-be-killed/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
-    <article id="post-a-invisible-lock" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/20/a-invisible-lock/" class="article-date">
-  	<time datetime="2014-09-20T15:52:51.000Z" itemprop="datePublished">9月 20 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/20/a-invisible-lock/">[MySQL案例]之一把看不见的锁</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在processlist里面居然找不到任何引起表锁的请求。就这样折腾了到凌晨，后面索性就丢在自己等锁释放，差不多过了6分钟创建成功，load再次下降。</p>
-<h3 id="分析">分析</h3>
-<p>事后在5.5的手册中找到了解释：</p>
-<blockquote>
-<p>To ensure transaction serializability, the server must not permit one session to perform a data definition language (DDL) statement on a table that is used in an uncompleted transaction in another session. The server achieves this by acquiring metadata locks on tables used within a transaction and deferring release of those locks until the transaction ends. A metadata lock on a table prevents changes to the table’s structure. This locking approach has the implication that a table that is being used by a transaction within one session cannot be used in DDL statements by other sessions until the transaction ends. </p>
-</blockquote>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/20/a-invisible-lock/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
-    <article id="post-helloworld" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/17/helloworld/" class="article-date">
-  	<time datetime="2014-09-17T07:22:11.000Z" itemprop="datePublished">9月 17 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/other/">other</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/17/helloworld/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>按照惯例好像每个在github上写bolg的人都应该开篇写一章，好吧。<br>自从之前托管在同事的服务器崩溃了，我就好久没再写blog了，时隔好多好多个月，终于又鼓起勇气开始搭建blog。为了偷懒我决定抛弃wp，爱上github，然后然后下面稍微记录下这次搭建的过程，怎么也耗费了我一个下午的上班时间，罪过。<br>另外值得说的是，我是用hexo，而不是Jekyll和Octopress，为毛？简单，模板又多，好吧果然符合我喜欢偷懒的个性。</p>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/17/helloworld/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
-  
 
       <footer id="footer">
   <div class="outer">
