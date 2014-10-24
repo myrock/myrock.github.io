@@ -179,7 +179,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <p>由此看来原因1、2、3都不是造成这次失败的原因了，那应该就是原因4了。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; show global variables like 'max_allowed_packet';</span></div><div class="line">+--------------------+-------+</div><div class="line"><span class="header">| Variable_name      | Value |</span></div><div class="line">+--------------------+-------+</div><div class="line"><span class="header">| max_allowed_packet | 1024  | </span></div><div class="line">+--------------------+-------+</div><div class="line">1 row in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; set global max<span class="emphasis">_allowed_</span>packet=1024*1024*1024;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div></pre></td></tr></table></figure>
 
-<p>再导入测试，果然顺利结束不会报错了。再深入验证下果然这个备份文件的value超大。<br>由此发散下，以后要是遇到单表几亿行的数据库是不是要考虑用xtrabackup了？但是xtrabackup又支持单表恢复，蛋疼。</p>
+<p>再导入测试，果然顺利结束不会报错了。再深入验证下果然这个备份文件的value超大。</p>
 
       
     </div>
