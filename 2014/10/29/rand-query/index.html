@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[MySQL SQL优化系列]之如何高效获取随机数据 | HiDBA | 林晓嘉</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="起因
+前几天有位同事问我MySQL要怎么返回一张表的几行随机数据。这个问题其实网上随便一搜答案一大把，但是效果都不太理想，当你要获取随机几行（不是1行）时，得到的数据不是全随机的，而是随机区域。那么有没有办法真正的返回全随机的数据呢？
+分析
+一般来说获取随机数据，我们第一时间想到的应该是rand()函数。最直接的是order by rand() limit n，这完全能够符合我们的需求，但是效率之">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[MySQL SQL优化系列]之如何高效获取随机数据">
+<meta property="og:url" content="http://hidba.tk/2014/10/29/rand-query/">
+<meta property="og:site_name" content="HiDBA | 林晓嘉">
+<meta property="og:description" content="起因
+前几天有位同事问我MySQL要怎么返回一张表的几行随机数据。这个问题其实网上随便一搜答案一大把，但是效果都不太理想，当你要获取随机几行（不是1行）时，得到的数据不是全随机的，而是随机区域。那么有没有办法真正的返回全随机的数据呢？
+分析
+一般来说获取随机数据，我们第一时间想到的应该是rand()函数。最直接的是order by rand() limit n，这完全能够符合我们的需求，但是效率之">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[MySQL SQL优化系列]之如何高效获取随机数据">
+<meta name="twitter:description" content="起因
+前几天有位同事问我MySQL要怎么返回一张表的几行随机数据。这个问题其实网上随便一搜答案一大把，但是效果都不太理想，当你要获取随机几行（不是1行）时，得到的数据不是全随机的，而是随机区域。那么有没有办法真正的返回全随机的数据呢？
+分析
+一般来说获取随机数据，我们第一时间想到的应该是rand()函数。最直接的是order by rand() limit n，这完全能够符合我们的需求，但是效率之">
+
+  
+    <link rel="alternative" href="/atom.xml" title="HiDBA | 林晓嘉" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+  
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F3693cef63e2b72be16ac8ddde570e37d' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<div class="profilepic">
+			<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+		</div>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Technology change our life.</p>
+		
+
+		
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+			    <label class="onoffswitch-label" for="myonoffswitch">
+			        <span class="onoffswitch-inner"></span>
+			        <span class="onoffswitch-switch"></span>
+			    </label>
+			</div>
+		
+
+		<div class="switch-area">
+			<section class="first-part">
+				<nav class="header-menu">
+					<ul>
+					
+						<li><a href="/">HOME</a></li>
+			        
+						<li><a href="/archives">ARCHIVES</a></li>
+			        
+						<li><a href="/aboutme">ABOUT</a></li>
+			        
+					</ul>
+				</nav>
+				<nav class="header-nav">
+					<div class="social">
+						
+							<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+				        
+							<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+				        
+					</div>
+				</nav>
+			</section>
+			
+			
+			<section class="second-part">
+				<div class="widget tagcloud">
+					<a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/mysql/" style="font-size: 20.00px;">mysql</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
+				</div>
+			</section>
+			
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay"></div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+			</div>
+
+			<hgroup>
+			  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Technology change our life.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">HOME</a></li>
+		        
+					<li><a href="/archives">ARCHIVES</a></li>
+		        
+					<li><a href="/aboutme">ABOUT</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <article id="post-rand-query" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/10/29/rand-query/" class="article-date">
+  	<time datetime="2014-10-29T08:52:02.000Z" itemprop="datePublished">10月 29 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [MySQL SQL优化系列]之如何高效获取随机数据
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="起因">起因</h2>
+<p>前几天有位同事问我MySQL要怎么返回一张表的几行随机数据。这个问题其实网上随便一搜答案一大把，但是效果都不太理想，当你要获取随机几行（不是1行）时，得到的数据不是全随机的，而是随机区域。那么有没有办法真正的返回全随机的数据呢？</p>
+<h2 id="分析">分析</h2>
+<p>一般来说获取随机数据，我们第一时间想到的应该是rand()函数。最直接的是order by rand() limit n，这完全能够符合我们的需求，但是效率之地令人发指。我们来看看手册里面是怎么对这个函数描述的：</p>
+<blockquote>
+<p>Returns a random floating-point value v in the range 0 &lt;= v &lt; 1.0.<br>…<br>You cannot use a column with RAND() values in an ORDER BY clause, because ORDER BY would evaluate the column multiple times.<br>…<br>RAND() is not meant to be a perfect random generator. It is a fast way to generate random numbers on demand that is portable between platforms for the same MySQL version.</p>
+</blockquote>
+<p>简单说rand()能够随机返回一个从0~1之间的值，直接使用order by rand() limit m可以在表里获取随机样本，但是也会导致order by重复计算，因此效率非常低下，我们看一个例子。</p>
+<a id="more"></a>
+
+<h2 id="改造1">改造1</h2>
+<p><strong><em>test 1-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select id from t_user order by rand() limit 10; </span></div><div class="line">+--------+</div><div class="line"><span class="header">| id     |</span></div><div class="line">+--------+</div><div class="line">|  96979 | </div><div class="line">|  82638 | </div><div class="line">| 115767 | </div><div class="line">| 110451 | </div><div class="line">|  47689 | </div><div class="line">| 120664 | </div><div class="line">| 110043 | </div><div class="line">|  75426 | </div><div class="line">|  35199 | </div><div class="line"><span class="header">| 120880 | </span></div><div class="line">+--------+</div><div class="line">10 rows in set (0.12 sec)</div></pre></td></tr></table></figure>
+
+<p>上面案例中的表有10w行，在高并发的场景中已经已经是几乎完全不能接受，要是更大的表比如100w1000w呢？按照我们一贯贯彻的SQL优化思路来思考，是不是我得出m个随机值然后直接通过主键自增ID来比较即可（<strong>所有测试都是建立在表存在自增ID主键的前提下</strong>）？</p>
+<p><strong><em>test 1-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select id from t_user_log where id &gt; (select max(id) from t_user) * rand() limit 10;</span></div><div class="line">+------+</div><div class="line"><span class="header">| id   |</span></div><div class="line">+------+</div><div class="line">|  421 | </div><div class="line">|  478 | </div><div class="line">|  514 | </div><div class="line">|  772 | </div><div class="line">| 1070 | </div><div class="line">| 1152 | </div><div class="line">| 1230 | </div><div class="line">| 1452 | </div><div class="line">| 1501 | </div><div class="line"><span class="header">| 1504 | </span></div><div class="line">+------+</div><div class="line">10 rows in set (0.00 sec)</div><div class="line"><span class="comment">// 注：t_user_log表约3000万行数据</span></div></pre></td></tr></table></figure>
+
+<p>OK，非常高效，也是全部随机数据。但是注意到没有，返回的数据都是非常小，几乎都在表的最前面的一部分数据。<strong>那是因为limit 10的缘故，limit 10会直接在结果集做顺序匹配，一直到返回足够数量（10）的数据就结束查询。</strong>而rand()的值在每次递归查询时都是变化的，因此的出来值得几乎都是靠表的最前面部分，而得不到真正意思上的随机样本。这里我们可以explain验证下，是否走全表扫描/主键扫描/或者其他顺序跟主键排列一致的索引扫描。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; explain  select id from t_user_log  where id &gt; (select max(id) from t_user) * rand() limit 10;                   </span></div><div class="line">+----+-------------+------------+-------+---------------+-----------+---------+------+----------+------------------------------+</div><div class="line"><span class="header">| id | select_type | table      | type  | possible_keys | key       | key_len | ref  | rows     | Extra                        |</span></div><div class="line">+----+-------------+------------+-------+---------------+-----------+---------+------+----------+------------------------------+</div><div class="line">|  1 | PRIMARY     | t<span class="emphasis">_user_</span>log | index | NULL          | logintime | 4       | NULL | 29345201 | Using where; Using index     | </div><div class="line"><span class="header">|  2 | SUBQUERY    | NULL       | NULL  | NULL          | NULL      | NULL    | NULL |     NULL | Select tables optimized away | </span></div><div class="line">+----+-------------+------------+-------+---------------+-----------+---------+------+----------+------------------------------+</div><div class="line">2 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>如我们所料，查询是logintime索引扫描，而logintime是主键递增与自增ID主键的排列顺序是一致的。为了再彻底验证我们的想法，再做一个实验，分别强制使用主键以及另外的排列顺序与主键不一致的索引看看，返回数据区间是否发生了变化。</p>
+<p><strong><em>test 1-3</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select id from t_user_log force index (primary) where id &gt; (select max(id) from t_user) * rand() limit 10;          </span></div><div class="line">+------+</div><div class="line"><span class="header">| id   |</span></div><div class="line">+------+</div><div class="line">|  288 | </div><div class="line">|  928 | </div><div class="line">| 1689 | </div><div class="line">| 1692 | </div><div class="line">| 1745 | </div><div class="line">| 1753 | </div><div class="line">| 1761 | </div><div class="line">| 1823 | </div><div class="line">| 1921 | </div><div class="line"><span class="header">| 1923 | </span></div><div class="line">+------+</div><div class="line">10 rows in set (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select id from t_user_log force index (loginip) where id &gt; (select max(id) from t_user) * rand() limit 10;       </span></div><div class="line">+----------+</div><div class="line"><span class="header">| id       |</span></div><div class="line">+----------+</div><div class="line">| 25142689 | </div><div class="line">| 25680519 | </div><div class="line">| 17320096 | </div><div class="line">| 23015757 | </div><div class="line">|  8516312 | </div><div class="line">| 28329444 | </div><div class="line">| 28327037 | </div><div class="line">|  2838989 | </div><div class="line">|  9054950 | </div><div class="line"><span class="header">| 14630833 | </span></div><div class="line">+----------+</div><div class="line">10 rows in set (0.00 sec)</div></pre></td></tr></table></figure>
+
+<p>测试证明了我们的想法是正确的，走主键依然跟之前走logintime一样都是返回表前面部分的数据，换了一个排列顺序与主键不一致的loginip作为索引，返回的结果看起来就比较随机化。这里也证明我们的第一种SQL改造达不到理想的效果，这与优化器对索引的选择有关。</p>
+<h2 id="改造2">改造2</h2>
+<p>这里我们使用网上流传比较广泛的关联写法来看看能否达到我们的预期。</p>
+<p><strong><em>test 2-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">mysql&gt; select a.id from  t<span class="emphasis">_user_</span>log a join (select rand() * (select max(id) from t<span class="emphasis">_user_</span>log ) as rid) b </div><div class="line"><span class="header">    -&gt; on a.id &gt; b.rid limit 10;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| id       |</span></div><div class="line">+----------+</div><div class="line">| 23702733 | </div><div class="line">| 23702734 | </div><div class="line">| 23702735 | </div><div class="line">| 23702736 | </div><div class="line">| 23702737 | </div><div class="line">| 23702738 | </div><div class="line">| 23702739 | </div><div class="line">| 23702740 | </div><div class="line">| 23702741 | </div><div class="line"><span class="header">| 23702742 | </span></div><div class="line">+----------+</div><div class="line">10 rows in set (0.01 sec)</div></pre></td></tr></table></figure>
+
+<p>效率很高，但是返回的数据其实是随机区间，而不是真正的随机几条样本。也就是说你要获取的是随机一行那OK，要是随机几行或许还达不到真正的需求。<br>前面我们也说了rand()在where中，每行计算都会重新计算也就是说它是一个变量，但是在上面的例子中，rand()出现在匹配表中，而不是后面的过滤条件，因此只会产生一个值，可以近似理解为一个常量，最后在这个常量只是做过滤匹配，选择10行数据因此，得到的是一个随机区间的数据。</p>
+<h2 id="改造3">改造3</h2>
+<p>我们的需求是得到完全随机的N行数据，那么换个思路，我们能不能得到N个小于最大ID的随机数据数字ID，再使用主键匹配关联呢？MayBe.</p>
+<p><strong><em>test 3-1</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="header">mysql&gt; select (select max(id) from t_user_log) * rand() from t_user_log limit 10;</span></div><div class="line">+-------------------------------------------+</div><div class="line"><span class="header">| (select max(id) from t_user_log) * rand() |</span></div><div class="line">+-------------------------------------------+</div><div class="line">|                        18017949.208536115 | </div><div class="line">|                         792399.6698163977 | </div><div class="line">|                        11028577.662700385 | </div><div class="line">|                         22205477.24327947 | </div><div class="line">|                        16821228.167522915 | </div><div class="line">|                        17489710.047002923 | </div><div class="line">|                         6424653.671672591 | </div><div class="line">|                        10214352.156580932 | </div><div class="line">|                        1237587.7071136252 | </div><div class="line"><span class="header">|                        6105096.0050520655 | </span></div><div class="line">+-------------------------------------------+</div><div class="line">10 rows in set (0.00 sec)</div><div class="line"></div><div class="line">mysql&gt; select a.id from t<span class="emphasis">_user_</span>log a join (select round((select max(id) from t<span class="emphasis">_user_</span>log) * rand())  as rid </div><div class="line"><span class="header">    -&gt; from t_user_log limit 10) b where a.id = b.rid;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| id       |</span></div><div class="line">+----------+</div><div class="line">| 22648946 | </div><div class="line">| 25595789 | </div><div class="line">| 29471892 | </div><div class="line">|  9451671 | </div><div class="line">| 19963103 | </div><div class="line">| 10340078 | </div><div class="line">| 22371296 | </div><div class="line">| 19715821 | </div><div class="line">|   905005 | </div><div class="line"><span class="header">|  6497987 | </span></div><div class="line">+----------+</div><div class="line">10 rows in set (0.05 sec)</div></pre></td></tr></table></figure>
+
+<p>OK，到这里是不是就能完美的解决我们的问题呢。从3000W行的大表中真正的随机返回10行数据数据就是这么简单。如果你更处女座一点，又或者你的表数据被截断过min(id)可能都非常大，那么我们可以再彻底点。</p>
+<p><strong><em>test 3-2</em></strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="code"> mysql&gt; select a.id from  t_user_log a join </span></div><div class="line"><span class="code">     -&gt; (select round(( select max(id) - min(id) from t_user_log ) * rand() + (select min(id) from t_user_log))  as rid from t_user_log limit 10 ) </span></div><div class="line"><span class="header">     -&gt; b on a.id = b.rid ;</span></div><div class="line">+----------+</div><div class="line"><span class="header">| id       |</span></div><div class="line">+----------+</div><div class="line">| 15740358 | </div><div class="line">| 28635240 | </div><div class="line">|  4274489 | </div><div class="line">| 27147362 | </div><div class="line">|   672493 | </div><div class="line">| 13601017 | </div><div class="line">|  4867180 | </div><div class="line">| 14093062 | </div><div class="line">| 25303557 | </div><div class="line"><span class="header">| 23118176 | </span></div><div class="line">+----------+</div><div class="line">10 rows in set (0.03 sec)</div></pre></td></tr></table></figure>
+
+<h2 id="总结">总结</h2>
+<p>这个SQL写法能够满足你获取随机样本数据的需求，前提是你需要有一个自增ID作为主键或者唯一索引。</p>
+<blockquote>
+<p>select a.id from table a join (select round(( select max(id) - min(id) from table ) * rand() + (select min(id) from table))  as rid from table limit 10 ) b on a.id = b.rid ;</p>
+</blockquote>
+<h2 id="其他注意">其他注意</h2>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">bad : <span class="operator"><span class="keyword">select</span> <span class="keyword">max</span>(id) * <span class="keyword">rand</span>() <span class="keyword">from</span> t_user_log;</span></div><div class="line">good : <span class="operator"><span class="keyword">select</span> (<span class="keyword">select</span> <span class="keyword">max</span>(id) <span class="keyword">from</span> t_user_log) * <span class="keyword">rand</span>();</span></div></pre></td></tr></table></figure>
+
+<p>上面两种写法的效果是一样的，但是代价却是天差地别，在一张表里面使用rand()计算跟与一个常量进行计算的效率差距是非常大的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2014/10/21/optimize-limit-query/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">[MySQL SQL优化系列]之分页查询</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="rand-query" data-title="[MySQL SQL优化系列]之如何高效获取随机数据" data-url="http://hidba.tk/2014/10/29/rand-query/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"HiDBA"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-right">
+    		&copy; 2014 林晓嘉
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+  <script src="/js/main.js" type="text/javascript"></script>
+
+
+  </div>
+</body>
+</html>
