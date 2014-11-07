@@ -86,7 +86,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 			
 			<section class="second-part">
 				<div class="widget tagcloud">
-					<a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/mysql/" style="font-size: 20.00px;">mysql</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
+					<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 10.00px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 10.00px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 10.00px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
 				</div>
 			</section>
 			
@@ -135,6 +135,62 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </nav>
       
   
+    <article id="post-redis-ops" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/11/07/redis-ops/" class="article-date">
+  	<time datetime="2014-11-07T09:07:15.000Z" itemprop="datePublished">11月 7 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ops/">ops</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/07/redis-ops/">redis运维经验一二三</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文主要介绍一些列简单的redis运维经验，帮助大家对redis的运维有个初步的了解，条目不分先后，后续还会持续添加。本文档预期读者为：redis使用者。</p>
+<h2 id="计算延迟时间">计算延迟时间</h2>
+<p>这里的延迟时间指的是指令请求的等待时间（单位为毫秒），包含网络延时以及单线程的命令等待，命令很简单：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">redis-cli --latency- history --i &lt;interval&gt;</span> -h `host` -p `port`</span></div></pre></td></tr></table></figure>
+
+<p>这里我们来测试下<br><strong>场景1：本地空闲的redis实例，延时几乎为0</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[root@lxj tmp]<span class="preprocessor"># /usr/local/redis/bin/redis-cli --latency-history -i 5 -h 10.59.95.42 -p 6379</span></div><div class="line"><span class="built_in">min</span>: <span class="number">0</span>, <span class="built_in">max</span>: <span class="number">1</span>, avg: <span class="number">0.00</span> (<span class="number">455</span> samples) -- <span class="number">5.01</span> seconds range</div><div class="line"><span class="built_in">min</span>: <span class="number">0</span>, <span class="built_in">max</span>: <span class="number">0</span>, avg: <span class="number">0.00</span> (<span class="number">423</span> samples) -- <span class="number">5.00</span> seconds range</div><div class="line"><span class="built_in">min</span>: <span class="number">0</span>, <span class="built_in">max</span>: <span class="number">1</span>, avg: <span class="number">0.00</span> (<span class="number">455</span> samples) -- <span class="number">5.01</span> seconds range</div><div class="line"><span class="built_in">min</span>: <span class="number">0</span>, <span class="built_in">max</span>: <span class="number">1</span>, avg: <span class="number">0.28</span> (<span class="number">455</span> samples) -- <span class="number">5.01</span> seconds range</div></pre></td></tr></table></figure>
+
+
+        
+          <p class="article-more-link">
+            <a href="/2014/11/07/redis-ops/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-rand-query" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -143,7 +199,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -199,7 +255,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -260,7 +316,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -325,7 +381,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -380,7 +436,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -451,7 +507,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
@@ -509,7 +565,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/">mysql</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
 
     </div>
   
