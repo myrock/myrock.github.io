@@ -135,6 +135,63 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </nav>
       
   
+    <article id="post-mysql-waiting-for-table-flush" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/11/20/mysql-waiting-for-table-flush/" class="article-date">
+  	<time datetime="2014-11-20T10:16:41.000Z" itemprop="datePublished">11月 20 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/11/20/mysql-waiting-for-table-flush/">[MySQL案例]之备份与Waiting for table flush</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天在处理慢查询平台的slow query时发现今天排在第一个的居然是一个简单的SQL，运行了4166次，最长耗时610秒，长期处于“Waiting for table flush”状态。</p>
+<p><img src="http://image-myrock-github-io.qiniudn.com/sql-20141120.jpg" alt=""></p>
+<h2 id="结果说在前面">结果说在前面</h2>
+<p>排查一番后果然不出意外：<strong>一个慢查询堵塞数据库备份进程，备份进程堵塞了后续的查询SQL，最后导致后续的大面积SQL等待。</strong></p>
+<h2 id="那么问题来了">那么问题来了</h2>
+<ol>
+<li>一个慢查询是怎么堵塞mysqldump进程</li>
+<li>mysqldump是怎么堵塞后续的查询请求</li>
+</ol>
+
+        
+          <p class="article-more-link">
+            <a href="/2014/11/20/mysql-waiting-for-table-flush/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-redis-ops" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -153,7 +210,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/11/07/redis-ops/">redis运维经验一二三</a>
+      <a class="article-title" href="/2014/11/07/redis-ops/">Redis运维经验一二三</a>
     </h1>
   
 
