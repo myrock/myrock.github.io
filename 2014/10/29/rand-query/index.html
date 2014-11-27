@@ -59,46 +59,98 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 		
 
 		
-			<div class="onoffswitch">
-			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
-			    <label class="onoffswitch-label" for="myonoffswitch">
-			        <span class="onoffswitch-inner"></span>
-			        <span class="onoffswitch-switch"></span>
-			    </label>
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
 			</div>
 		
 
 		<div class="switch-area">
-			<section class="first-part">
-				<nav class="header-menu">
-					<ul>
-					
-						<li><a href="/">HOME</a></li>
-			        
-						<li><a href="/archives">ARCHIVES</a></li>
-			        
-						<li><a href="/aboutme">ABOUT</a></li>
-			        
-					</ul>
-				</nav>
-				<nav class="header-nav">
-					<div class="social">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
 						
-							<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+							<li><a href="/">HOME</a></li>
 				        
-							<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+							<li><a href="/archives">ARCHIVES</a></li>
 				        
+							<li><a href="/aboutme">ABOUT</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/myrock/myrock.github.io" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/u/1735228455" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud">
+						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 10.00px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 10.00px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 10.00px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
 					</div>
-				</nav>
-			</section>
-			
-			
-			<section class="second-part">
-				<div class="widget tagcloud">
-					<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 10.00px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 10.00px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 10.00px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
-				</div>
-			</section>
-			
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://imysql.com/">叶金荣</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://17173ops.com/">17173系统部</a>
+			        
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					围绕着MySQL、NoSQL、Hadoop、运维开发领域摸爬滚打中的Rockpapa
+				</section>
+				
+			</div>
 		</div>
 	</header>				
 </div>
@@ -155,6 +207,9 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     </div>
   
   <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
     
       <header class="article-header">
         
@@ -233,7 +288,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <nav id="article-nav">
   
     <a href="/2014/11/07/redis-ops/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
+      <strong class="article-nav-caption">&lt;</strong>
       <div class="article-nav-title">
         
           Redis运维经验一二三
@@ -244,7 +299,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   
     <a href="/2014/10/21/optimize-limit-query/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">[MySQL SQL优化系列]之分页查询</div>
-      <strong class="article-nav-caption">></strong>
+      <strong class="article-nav-caption">&gt;</strong>
     </a>
   
 </nav>
