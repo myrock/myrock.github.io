@@ -3,9 +3,9 @@
   <title><![CDATA[HiDBA | 林晓嘉]]></title>
   <subtitle><![CDATA[Technology change our life.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
-  <link href="http://hidba.ga/"/>
-  <updated>2014-12-25T03:30:38.513Z</updated>
-  <id>http://hidba.ga/</id>
+  <link href="http://myrock.github.io/"/>
+  <updated>2014-12-25T03:37:52.062Z</updated>
+  <id>http://myrock.github.io/</id>
   
   <author>
     <name><![CDATA[林晓嘉]]></name>
@@ -16,8 +16,8 @@
   
   <entry>
     <title><![CDATA[[MySQL案例]之备份与Waiting for table flush]]></title>
-    <link href="http://hidba.ga/2014/11/20/mysql-waiting-for-table-flush/"/>
-    <id>http://hidba.ga/2014/11/20/mysql-waiting-for-table-flush/</id>
+    <link href="http://myrock.github.io/2014/11/20/mysql-waiting-for-table-flush/"/>
+    <id>http://myrock.github.io/2014/11/20/mysql-waiting-for-table-flush/</id>
     <published>2014-11-20T10:16:41.000Z</published>
     <updated>2014-11-20T14:51:43.000Z</updated>
     <content type="html"><![CDATA[<p>今天在处理慢查询平台的slow query时发现今天排在第一个的居然是一个简单的SQL，运行了4166次，最长耗时610秒，长期处于“Waiting for table flush”状态。</p>
@@ -84,16 +84,16 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Redis运维经验一二三]]></title>
-    <link href="http://hidba.ga/2014/11/07/redis-ops/"/>
-    <id>http://hidba.ga/2014/11/07/redis-ops/</id>
+    <link href="http://myrock.github.io/2014/11/07/redis-ops/"/>
+    <id>http://myrock.github.io/2014/11/07/redis-ops/</id>
     <published>2014-11-07T09:07:15.000Z</published>
     <updated>2014-11-10T08:28:11.000Z</updated>
     <content type="html"><![CDATA[<p>本文主要介绍一些列简单的redis运维经验，帮助大家对redis的运维有个初步的了解，条目不分先后，后续还会持续添加。本文档预期读者为：redis使用者。</p>
@@ -154,18 +154,18 @@
     
     </summary>
     
-      <category term="NoSQL" scheme="http://hidba.ga/tags/NoSQL/"/>
+      <category term="NoSQL" scheme="http://myrock.github.io/tags/NoSQL/"/>
     
-      <category term="Redis" scheme="http://hidba.ga/tags/Redis/"/>
+      <category term="Redis" scheme="http://myrock.github.io/tags/Redis/"/>
     
-      <category term="ops" scheme="http://hidba.ga/tags/ops/"/>
+      <category term="ops" scheme="http://myrock.github.io/tags/ops/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL SQL优化系列]之如何高效获取随机数据]]></title>
-    <link href="http://hidba.ga/2014/10/29/rand-query/"/>
-    <id>http://hidba.ga/2014/10/29/rand-query/</id>
+    <link href="http://myrock.github.io/2014/10/29/rand-query/"/>
+    <id>http://myrock.github.io/2014/10/29/rand-query/</id>
     <published>2014-10-29T08:52:02.000Z</published>
     <updated>2014-11-07T07:04:26.000Z</updated>
     <content type="html"><![CDATA[<h2 id="起因">起因</h2>
@@ -234,18 +234,18 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
-      <category term="SQL优化" scheme="http://hidba.ga/tags/SQL%E4%BC%98%E5%8C%96/"/>
+      <category term="SQL优化" scheme="http://myrock.github.io/tags/SQL%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL SQL优化系列]之分页查询]]></title>
-    <link href="http://hidba.ga/2014/10/21/optimize-limit-query/"/>
-    <id>http://hidba.ga/2014/10/21/optimize-limit-query/</id>
+    <link href="http://myrock.github.io/2014/10/21/optimize-limit-query/"/>
+    <id>http://myrock.github.io/2014/10/21/optimize-limit-query/</id>
     <published>2014-10-21T07:01:17.000Z</published>
     <updated>2014-11-07T07:04:23.000Z</updated>
     <content type="html"><![CDATA[<p>记得在很久以前我在公司内部做过一次MySQL优化分享里面说到一个使用延迟关联实现排序分页类型SQL的优化，这个案例在《高性能MySQL》的第二版还是第三版也有提及。</p>
@@ -306,18 +306,18 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
-      <category term="SQL优化" scheme="http://hidba.ga/tags/SQL%E4%BC%98%E5%8C%96/"/>
+      <category term="SQL优化" scheme="http://myrock.github.io/tags/SQL%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL SQL优化系列]之连接查询]]></title>
-    <link href="http://hidba.ga/2014/09/26/join-query-in-mysql/"/>
-    <id>http://hidba.ga/2014/09/26/join-query-in-mysql/</id>
+    <link href="http://myrock.github.io/2014/09/26/join-query-in-mysql/"/>
+    <id>http://myrock.github.io/2014/09/26/join-query-in-mysql/</id>
     <published>2014-09-26T07:49:36.000Z</published>
     <updated>2014-11-07T07:04:19.000Z</updated>
     <content type="html"><![CDATA[<p>MySQL的连接查询包括内连接（inner join）、外连接（left/right join，下文一律以left join代替）、交叉连接（在MySQL中等价于内连接，但是在标准SQL中是不等价的）、全连接（MySQL不支持full join，但是可以通过union构造），本文主要讲解一般我们在写SQL中最常用的：内连接以及外连接两种连接查询，通过一些案例来说明我们在使用关联查询中需要注意什么问题，要怎么做才能做到最优查询。</p>
@@ -458,18 +458,18 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
-      <category term="SQL优化" scheme="http://hidba.ga/tags/SQL%E4%BC%98%E5%8C%96/"/>
+      <category term="SQL优化" scheme="http://myrock.github.io/tags/SQL%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL案例]之Discuz大表拆分]]></title>
-    <link href="http://hidba.ga/2014/09/25/separate-table/"/>
-    <id>http://hidba.ga/2014/09/25/separate-table/</id>
+    <link href="http://myrock.github.io/2014/09/25/separate-table/"/>
+    <id>http://myrock.github.io/2014/09/25/separate-table/</id>
     <published>2014-09-25T12:19:18.000Z</published>
     <updated>2014-11-07T07:04:36.000Z</updated>
     <content type="html"><![CDATA[<h1 id="背景">背景</h1>
@@ -546,16 +546,16 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL SQL优化系列]之in与range查询]]></title>
-    <link href="http://hidba.ga/2014/09/24/in-and-range/"/>
-    <id>http://hidba.ga/2014/09/24/in-and-range/</id>
+    <link href="http://myrock.github.io/2014/09/24/in-and-range/"/>
+    <id>http://myrock.github.io/2014/09/24/in-and-range/</id>
     <published>2014-09-24T07:22:01.000Z</published>
     <updated>2014-11-07T07:04:16.000Z</updated>
     <content type="html"><![CDATA[<p>首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：</p>
@@ -652,18 +652,18 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
-      <category term="SQL优化" scheme="http://hidba.ga/tags/SQL%E4%BC%98%E5%8C%96/"/>
+      <category term="SQL优化" scheme="http://myrock.github.io/tags/SQL%E4%BC%98%E5%8C%96/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL案例]之恢复进程莫名被杀]]></title>
-    <link href="http://hidba.ga/2014/09/22/recover-be-killed/"/>
-    <id>http://hidba.ga/2014/09/22/recover-be-killed/</id>
+    <link href="http://myrock.github.io/2014/09/22/recover-be-killed/"/>
+    <id>http://myrock.github.io/2014/09/22/recover-be-killed/</id>
     <published>2014-09-22T03:23:12.000Z</published>
     <updated>2014-11-07T07:04:30.000Z</updated>
     <content type="html"><![CDATA[<p>今天上班就发现一起数据库例行恢复作业失败，失败提示为：“数据库恢复失败”，也就是说是在执行mysql &lt; dumpfile的时候失败了。</p>
@@ -700,16 +700,16 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[[MySQL案例]之一把看不见的锁]]></title>
-    <link href="http://hidba.ga/2014/09/20/a-invisible-lock/"/>
-    <id>http://hidba.ga/2014/09/20/a-invisible-lock/</id>
+    <link href="http://myrock.github.io/2014/09/20/a-invisible-lock/"/>
+    <id>http://myrock.github.io/2014/09/20/a-invisible-lock/</id>
     <published>2014-09-20T15:52:51.000Z</published>
     <updated>2014-11-07T07:04:10.000Z</updated>
     <content type="html"><![CDATA[<p>昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在processlist里面居然找不到任何引起表锁的请求。就这样折腾了到凌晨，后面索性就丢在自己等锁释放，差不多过了6分钟创建成功，load再次下降。</p>
@@ -775,16 +775,16 @@
     
     </summary>
     
-      <category term="database" scheme="http://hidba.ga/tags/database/"/>
+      <category term="database" scheme="http://myrock.github.io/tags/database/"/>
     
-      <category term="MySQL" scheme="http://hidba.ga/tags/MySQL/"/>
+      <category term="MySQL" scheme="http://myrock.github.io/tags/MySQL/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Hello World]]></title>
-    <link href="http://hidba.ga/2014/09/17/helloworld/"/>
-    <id>http://hidba.ga/2014/09/17/helloworld/</id>
+    <link href="http://myrock.github.io/2014/09/17/helloworld/"/>
+    <id>http://myrock.github.io/2014/09/17/helloworld/</id>
     <published>2014-09-17T07:22:11.000Z</published>
     <updated>2014-10-09T01:52:43.000Z</updated>
     <content type="html"><![CDATA[<p>按照惯例好像每个在github上写bolg的人都应该开篇写一章，好吧。<br>自从之前托管在同事的服务器崩溃了，我就好久没再写blog了，时隔好多好多个月，终于又鼓起勇气开始搭建blog。为了偷懒我决定抛弃wp，爱上github，然后然后下面稍微记录下这次搭建的过程，怎么也耗费了我一个下午的上班时间，罪过。<br>另外值得说的是，我是用hexo，而不是Jekyll和Octopress，为毛？简单，模板又多，好吧果然符合我喜欢偷懒的个性。</p>
@@ -886,7 +886,7 @@ hello world
     
     </summary>
     
-      <category term="other" scheme="http://hidba.ga/tags/other/"/>
+      <category term="other" scheme="http://myrock.github.io/tags/other/"/>
     
   </entry>
   
