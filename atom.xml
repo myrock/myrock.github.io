@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Technology change our life.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://hidba.ga/"/>
-  <updated>2014-12-26T17:21:41.975Z</updated>
+  <updated>2014-12-26T17:27:47.411Z</updated>
   <id>http://hidba.ga/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://hidba.ga/2014/12/26/a-invisible-lock2/"/>
     <id>http://hidba.ga/2014/12/26/a-invisible-lock2/</id>
     <published>2014-12-26T13:19:37.000Z</published>
-    <updated>2014-12-26T17:21:36.000Z</updated>
+    <updated>2014-12-26T17:27:40.000Z</updated>
     <content type="html"><![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
@@ -114,6 +114,7 @@
 <ol>
 <li>在MySQL 5.5.3以后的版本中，未提交的事务一定会堵塞DDL请求（据说5.6.6以后的版本做了相关的优化，未做测试暂且不提）</li>
 <li>DDL在等待metada lock的过程中肯定会堵塞后续的DML请求，也有可能堵塞后续的SELECT请求（需要看SELECT请求是否能够命中qcache）</li>
+<li>怎么处理这种问题是老生常谈了，优化SQL避免出现大事务，请求结束立即执行commit关闭事务，千万千万不要把所有的请求甚至包括代码的逻辑处理都塞在一个事务里面去完成，否则一旦出现一个DDL那就是灾难的发生，很难想象这次要是没有过载保护，XX系统是不会直接宕机呢？</li>
 </ol>
 ]]></content>
     <summary type="html">

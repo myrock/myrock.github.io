@@ -316,6 +316,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 <ol>
 <li>在MySQL 5.5.3以后的版本中，未提交的事务一定会堵塞DDL请求（据说5.6.6以后的版本做了相关的优化，未做测试暂且不提）</li>
 <li>DDL在等待metada lock的过程中肯定会堵塞后续的DML请求，也有可能堵塞后续的SELECT请求（需要看SELECT请求是否能够命中qcache）</li>
+<li>怎么处理这种问题是老生常谈了，优化SQL避免出现大事务，请求结束立即执行commit关闭事务，千万千万不要把所有的请求甚至包括代码的逻辑处理都塞在一个事务里面去完成，否则一旦出现一个DDL那就是灾难的发生，很难想象这次要是没有过载保护，XX系统是不会直接宕机呢？</li>
 </ol>
 
       
