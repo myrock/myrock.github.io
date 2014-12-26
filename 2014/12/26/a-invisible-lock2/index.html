@@ -225,6 +225,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
         <p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
+<a id="more"></a>
+
 <h2 id="问题说在前面">问题说在前面</h2>
 <p>这次发现大量的SELECT执行超过300秒，状态都是”Waiting for table metadata lock”。按照前面的说明，metadata lock应该是与DDL加锁互斥，而DDL加的是一把write access read lock，理论上是不会堵塞查询请求。而后在测试过程中又遇到几个问题，这里就一一描述下：</p>
 <p><strong>问题一：为什么出现上文提及的select会需要等待metadata lock加锁？</strong><br><strong>问题二：在测试过程中发现模拟同样的操作，有些select无需等待metadata lock加锁？</strong><br><strong>问题三：为什么有些DDL不会有metadata lock等待？同样的数据表在5.5与5.6版本下实验结果不一致？</strong></p>
