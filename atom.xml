@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Technology change our life.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://hidba.ga/"/>
-  <updated>2014-12-26T17:27:47.411Z</updated>
+  <updated>2014-12-29T05:56:04.460Z</updated>
   <id>http://hidba.ga/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://hidba.ga/2014/12/26/a-invisible-lock2/"/>
     <id>http://hidba.ga/2014/12/26/a-invisible-lock2/</id>
     <published>2014-12-26T13:19:37.000Z</published>
-    <updated>2014-12-26T17:27:40.000Z</updated>
+    <updated>2014-12-29T05:55:35.000Z</updated>
     <content type="html"><![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
@@ -58,7 +58,7 @@
 
 <p>然后session A提交以后，session B就解锁开始执行。</p>
 <h2 id="问题三过程重现">问题三过程重现</h2>
-<p>第三个问题是在一张<strong>两千万的大表</strong>上测试发现的，在测试的过程中发现DDL的状态并未处于”Waiting for table metadata lock”，而是开始执行，在查看进程的时候已经是处于”copy to tmp table”状态。<br>更奇怪的是同样的数据在不同版本的数据库中，实验结果是不一样的。在5.5.28的版本中出现如上面描述的未出现”Waiting for table metadata lock”，但是在5.6.21版本执行中出现了跟上面的问题一一样的状况。</p>
+<p>第三个问题是在一张<strong>两千万的大表</strong>上测试发现的，在测试的过程中发现DDL的状态并未处于”Waiting for table metadata lock”，而是开始执行，在查看进程的时候已经是处于”copy to tmp table”状态。<br>更奇怪的是同样的数据在不同版本的数据库中，实验结果是不一样的。在5.5.28的版本中如上面描述的未出现”Waiting for table metadata lock”，但是在5.6.21版本实验的结果是跟问题一描述得有一般。</p>
 <p><strong>MySQL5.5.28实验</strong></p>
 <p><em>session A</em> //开启显性事务，执行一个查询后不要提交</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">mysql&gt; begin;         </div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line"><span class="header">mysql&gt; select * from t_user_log limit 1 ;</span></div><div class="line">+----+-----------+----------------------+--------------+-----------------+-----------------------------------+------------+-----------+-----------+</div><div class="line"><span class="header">| id | uid       | username             | appname      | loginip         | loginlocation                     | logintime  | logintype | useragent |</span></div><div class="line">+----+-----------+----------------------+--------------+-----------------+-----------------------------------+------------+-----------+-----------+</div><div class="line"><span class="header">|  1 | 101603700 | xxxxxx@17173.com     | 发号中心     | xx.246.216.xxx  | 湖南省郴州市 (永兴)电信           | 1406822402 |         1 |           | </span></div><div class="line">+----+-----------+----------------------+--------------+-----------------+-----------------------------------+------------+-----------+-----------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
