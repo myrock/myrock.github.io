@@ -220,7 +220,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
       
         <p>本文为<a href="http://hidba.ga/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
 <h3 id="你首先需要了解的东西">你首先需要了解的东西</h3>
-<p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，后续我们会推出redis代理以及分布式方案来提升redis的CPU使用率。</p>
+<p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，可以使用redis代理或者是分布式方案来提升redis的CPU使用率。</p>
 
         
           <p class="article-more-link">
