@@ -119,7 +119,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud">
-						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 10.00px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 10.00px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 10.00px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
+						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 13.33px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 13.33px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 16.67px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 13.33px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
 					</div>
 				</section>
 				
@@ -189,6 +189,63 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </nav>
       
   
+    <article id="post-a-invisible-lock" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2014/09/20/a-invisible-lock/" class="article-date">
+  	<time datetime="2014-09-20T15:52:51.000Z" itemprop="datePublished">9月 20 2014</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/09/20/a-invisible-lock/">[MySQL案例]之一把看不见的锁</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在processlist里面居然找不到任何引起表锁的请求。就这样折腾了到凌晨，后面索性就丢在自己等锁释放，差不多过了6分钟创建成功，load再次下降。</p>
+<h3 id="分析">分析</h3>
+<p>事后在5.5的手册中找到了解释：</p>
+<blockquote>
+<p>To ensure transaction serializability, the server must not permit one session to perform a data definition language (DDL) statement on a table that is used in an uncompleted transaction in another session. The server achieves this by acquiring metadata locks on tables used within a transaction and deferring release of those locks until the transaction ends. A metadata lock on a table prevents changes to the table’s structure. This locking approach has the implication that a table that is being used by a transaction within one session cannot be used in DDL statements by other sessions until the transaction ends. </p>
+</blockquote>
+
+        
+          <p class="article-more-link">
+            <a href="/2014/09/20/a-invisible-lock/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
+  
     <article id="post-helloworld" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -251,7 +308,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-right">
-    		&copy; 2014 林晓嘉
+    		&copy; 2015 林晓嘉
     	</div>
     </div>
   </div>

@@ -119,7 +119,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud">
-						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 10.00px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 10.00px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 15.00px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 10.00px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
+						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 13.33px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 13.33px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 16.67px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 13.33px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
 					</div>
 				</section>
 				
@@ -188,6 +188,60 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	</div>
 </nav>
       
+  
+    <article id="post-reids-dev-norm" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/01/13/reids-dev-norm/" class="article-date">
+  	<time datetime="2015-01-13T08:00:57.000Z" itemprop="datePublished">1月 13 2015</time>
+</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NoSQL/">NoSQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ops/">ops</a></li></ul>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/01/13/reids-dev-norm/">Redis开发规范一二三</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文为<a href="http://hidba.ga/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
+<h3 id="你首先需要了解的东西">你首先需要了解的东西</h3>
+<p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，后续我们会推出redis代理以及分布式方案来提升redis的CPU使用率。</p>
+
+        
+          <p class="article-more-link">
+            <a href="/2015/01/13/reids-dev-norm/#more">more >></a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+
   
     <article id="post-a-invisible-lock2" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -746,63 +800,6 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 
   
-    <article id="post-a-invisible-lock" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2014/09/20/a-invisible-lock/" class="article-date">
-  	<time datetime="2014-09-20T15:52:51.000Z" itemprop="datePublished">9月 20 2014</time>
-</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/09/20/a-invisible-lock/">[MySQL案例]之一把看不见的锁</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨晚半夜处理了一个故障，只是简单SQL执行缺少索引导致CPU飙高，加一条索引就搞定。原来以为事情到此为止，让另外一个同事收尾准备睡觉了，这个时候高潮出现了。刚才处理的是一台slave server，为了保证实例数据对象一致性，让同事先删掉，然后在master server再加这条索引，最后发现add index的操作在slave server一直在等metadata lock释放了，并且在processlist里面居然找不到任何引起表锁的请求。就这样折腾了到凌晨，后面索性就丢在自己等锁释放，差不多过了6分钟创建成功，load再次下降。</p>
-<h3 id="分析">分析</h3>
-<p>事后在5.5的手册中找到了解释：</p>
-<blockquote>
-<p>To ensure transaction serializability, the server must not permit one session to perform a data definition language (DDL) statement on a table that is used in an uncompleted transaction in another session. The server achieves this by acquiring metadata locks on tables used within a transaction and deferring release of those locks until the transaction ends. A metadata lock on a table prevents changes to the table’s structure. This locking approach has the implication that a table that is being used by a transaction within one session cannot be used in DDL statements by other sessions until the transaction ends. </p>
-</blockquote>
-
-        
-          <p class="article-more-link">
-            <a href="/2014/09/20/a-invisible-lock/#more">more >></a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -813,7 +810,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-right">
-    		&copy; 2014 林晓嘉
+    		&copy; 2015 林晓嘉
     	</div>
     </div>
   </div>
