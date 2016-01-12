@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Technology change our life.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://myrock.github.io/"/>
-  <updated>2016-01-12T09:50:58.050Z</updated>
+  <updated>2016-01-12T10:03:46.561Z</updated>
   <id>http://myrock.github.io/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <link href="http://myrock.github.io/2015/01/13/reids-dev-norm/"/>
     <id>http://myrock.github.io/2015/01/13/reids-dev-norm/</id>
     <published>2015-01-13T08:00:57.000Z</published>
-    <updated>2015-01-13T08:13:23.000Z</updated>
-    <content type="html"><![CDATA[<p>本文为<a href="http://hidba.ga/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
+    <updated>2016-01-12T09:58:22.000Z</updated>
+    <content type="html"><![CDATA[<p>本文为<a href="http://myrock.github.io/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
 <h3 id="你首先需要了解的东西">你首先需要了解的东西</h3>
 <p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，可以使用redis代理或者是分布式方案来提升redis的CPU使用率。</p>
 <a id="more"></a>
@@ -73,7 +73,7 @@
 <p>Redis提供一个pipeline的管道操作模式，将多个指令汇总到队列中批量执行，可以减少tcp交互产生的时间，一般情况下能够有10%~30%不等的性能提升。但是需要注意的是，pipeline与multi不同，无法保证请求之间的原子性，因此需要考虑使用场景。如果业务场景允许，这也是一个性能提升的点。</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>本文为<a href="http://hidba.ga/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
+    <![CDATA[<p>本文为<a href="http://myrock.github.io/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
 <h3 id="你首先需要了解的东西">你首先需要了解的东西</h3>
 <p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，可以使用redis代理或者是分布式方案来提升redis的CPU使用率。</p>
 ]]>
@@ -93,8 +93,8 @@
     <link href="http://myrock.github.io/2014/12/26/a-invisible-lock2/"/>
     <id>http://myrock.github.io/2014/12/26/a-invisible-lock2/</id>
     <published>2014-12-26T13:19:37.000Z</published>
-    <updated>2014-12-29T06:01:02.000Z</updated>
-    <content type="html"><![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
+    <updated>2016-01-12T10:00:11.000Z</updated>
+    <content type="html"><![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://myrock.github.io/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
 <a id="more"></a>
@@ -192,7 +192,7 @@
 </ol>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
+    <![CDATA[<p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://myrock.github.io/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
 ]]>
@@ -748,7 +748,7 @@
     <link href="http://myrock.github.io/2014/09/24/in-and-range/"/>
     <id>http://myrock.github.io/2014/09/24/in-and-range/</id>
     <published>2014-09-24T07:22:01.000Z</published>
-    <updated>2014-11-07T07:04:16.000Z</updated>
+    <updated>2016-01-12T10:00:49.000Z</updated>
     <content type="html"><![CDATA[<p>首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：</p>
 <blockquote>
 <p>老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查询优化可能需要花很多时间，并消耗大量内存。新版本MySQL在组合数超过一定的数量就不进行计划评估了，这可能导致MySQL不能很好的利用索引。</p>

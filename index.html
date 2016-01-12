@@ -218,7 +218,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文为<a href="http://hidba.ga/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
+        <p>本文为<a href="http://myrock.github.io/2014/11/07/redis-ops/" target="_blank" rel="external">《Redis运维经验一二三》</a>的姐妹篇，主要阐述使用redis开发标准化的规范，简化运维成本，提升工作效率。</p>
 <h3 id="你首先需要了解的东西">你首先需要了解的东西</h3>
 <p>在使用redis之前你首先要了解：①redis是单线程作业，所谓的并发是通过epoll实现的并发活跃连接；②redis与memcached相对优点明显，缺点不明显，因此还在犹豫的同学放心的选择redis吧；③在实际生产中因为客户端效率以及各节点通讯开销，redis几乎不可能达到官网上写的10w的qps；④在实际的使用过程中，redis最大的瓶颈一般是CPU，由于它是单线程作业所以很容易跑满一个逻辑CPU，可以使用redis代理或者是分布式方案来提升redis的CPU使用率。</p>
 
@@ -272,7 +272,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://hidba.ga/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
+        <p>今天MySQL过载保护又立功干掉了一堆堵塞的SQL，到后台一看，发现了一大堆熟悉的”Waiting for table metadata lock”。之前刚好写过一篇关于metadata lock相关问题处理的<a href="http://myrock.github.io/2014/09/20/a-invisible-lock/" target="_blank" rel="external">文章</a>，有兴趣的同学自己点进去看看。</p>
 <h2 id="关于metadata_lock说明">关于metadata lock说明</h2>
 <p>在正式说明问题之前我们先来回顾下MySQL的metadata lock。metadata lock是MySQL在5.5.3版本以后引入的，在那之前MySQL的元数据锁的颗粒度是statement级别，在5.5.3版本引入metadata lock以后变成是transaction级别，改造的目的是为了解决著名的BUG989，也就是说可能出现slave同步复制失败。简单来说就是因为MySQL二进制日志是顺序写，如果在事务未提交前执行了DDL，则二进制日志先记录了DDL再记录DML的语句就可能导致slave同步应用失败。具体参见<a href="http://bugs.mysql.com/bug.php?id=989" target="_blank" rel="external">MySQL BUG989</a>。关于metadata lock的说明可以看<a href="http://dev.mysql.com/doc/refman/5.5/en/metadata-locking.html" target="_blank" rel="external">这里</a>。</p>
 
