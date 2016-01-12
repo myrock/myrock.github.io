@@ -10,7 +10,7 @@
 老版本的MySQL在IN()组合条件过多的时候会发生很多问题。查">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[MySQL SQL优化系列]之in与range查询">
-<meta property="og:url" content="http://hidba.ga/2014/09/24/in-and-range/">
+<meta property="og:url" content="http://myrock.github.io/2014/09/24/in-and-range/">
 <meta property="og:site_name" content="HiDBA | 林晓嘉">
 <meta property="og:description" content="首先我们来说下in()这种方式的查询。在《高性能MySQL》里面提及用in这种方式可以有效的替代一定的range查询，提升查询效率，因为在一条索引里面，range字段后面的部分是不生效的。使用in这种方式其实MySQL优化器是转化成了n*m种组合方式来进行查询，最终将返回值合并，有点类似union但是更高效。同时它存在这一些问题：
 
@@ -339,7 +339,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="in-and-range" data-title="[MySQL SQL优化系列]之in与range查询" data-url="http://hidba.ga/2014/09/24/in-and-range/"></div>
+	<div class="ds-thread" data-thread-key="in-and-range" data-title="[MySQL SQL优化系列]之in与range查询" data-url="http://myrock.github.io/2014/09/24/in-and-range/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
@@ -363,7 +363,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-right">
-    		&copy; 2015 林晓嘉
+    		&copy; 2016 林晓嘉
     	</div>
     </div>
   </div>
