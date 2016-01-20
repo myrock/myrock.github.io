@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <title>Archives: 2014/9 | HiDBA | 林晓嘉</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="林晓嘉 | 博客 | 数据库 | DBA | mysql | bi | 大数据">
@@ -23,23 +24,19 @@
   
   <link rel="stylesheet" href="/css/style.css" type="text/css">
 
-  <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
-  
-<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F3693cef63e2b72be16ac8ddde570e37d' type='text/javascript'%3E%3C/script%3E"));
-</script>
-
 </head>
+
 <body>
   <div id="container">
     <div class="left-col">
     <div class="overlay"></div>
 <div class="intrude-less">
 	<header id="header" class="inner">
-		<div class="profilepic">
-			<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
-		</div>
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://image-myrock-github-io.qiniudn.com/head.jpg" class="js-avatar">
+			
+		</a>
 
 		<hgroup>
 		  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
@@ -78,13 +75,13 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				<div class="tips-box hide">
 					<div class="tips-arrow"></div>
 					<ul class="tips-inner">
-						<li>菜单</li>
-						<li>标签</li>
+						<li>Menu</li>
+						<li>Tags</li>
 						
-						<li>友情链接</li>
+						<li>Links</li>
 						
 						
-						<li>关于我</li>
+						<li>About</li>
 						
 					</ul>
 				</div>
@@ -118,7 +115,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				
 				
 				<section class="switch-part switch-part2">
-					<div class="widget tagcloud">
+					<div class="widget tagcloud" id="js-tagcloud">
 						<a href="/tags/MySQL/" style="font-size: 20.00px;">MySQL</a><a href="/tags/NoSQL/" style="font-size: 13.33px;">NoSQL</a><a href="/tags/Redis/" style="font-size: 13.33px;">Redis</a><a href="/tags/SQL优化/" style="font-size: 16.67px;">SQL优化</a><a href="/tags/database/" style="font-size: 20.00px;">database</a><a href="/tags/ops/" style="font-size: 13.33px;">ops</a><a href="/tags/other/" style="font-size: 10.00px;">other</a>
 					</div>
 				</section>
@@ -126,13 +123,15 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				
 				
 				<section class="switch-part switch-part3">
+					<div id="js-friends">
 					
 			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://imysql.com/">叶金荣</a>
 			        
-			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://ljf.me/">李健富</a>
-			        
 			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://17173ops.com/">17173系统部</a>
 			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://ljf.me/">李健富</a>
+			        
+			        </div>
 				</section>
 				
 
@@ -140,25 +139,30 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 				
 				<section class="switch-part switch-part4">
 				
-					围绕着MySQL、NoSQL、Hadoop、运维开发领域摸爬滚打中的Rockpapa
+					<div id="js-aboutme">2007年开始从事Oracle DBA相关工作，2011年转型为互联网DBA主要负责MySQL以及一系列NoSQL相关的运维管理工作。目前围绕着MySQL、NoSQL、运维开发领域摸爬滚打中...</div>
 				</section>
 				
 			</div>
 		</div>
 	</header>				
 </div>
+
     </div>
     <div class="mid-col">
       <nav id="mobile-nav">
-  	<div class="overlay"></div>
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">林晓嘉</h1>
+  	</div>
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="http://image-myrock-github-io.qiniudn.com/head.jpg">
+			
+				<img lazy-src="http://image-myrock-github-io.qiniudn.com/head.jpg" class="js-avatar">
+			
 			</div>
-
 			<hgroup>
-			  <h1 class="header-author"><a href="/">林晓嘉</a></h1>
+			  <h1 class="header-author">林晓嘉</h1>
 			</hgroup>
 			
 			<p class="header-subtitle">Technology change our life.</p>
@@ -187,7 +191,8 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 		</header>				
 	</div>
 </nav>
-      
+
+      <div class="body-wrap">
   
   
     
@@ -207,19 +212,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/26/join-query-in-mysql/" class="archive-article-date">
   	<time datetime="2014-09-26T07:49:36.000Z" itemprop="datePublished">9月 26</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/26/join-query-in-mysql/">[MySQL SQL优化系列]之连接查询</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -233,19 +243,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/25/separate-table/" class="archive-article-date">
   	<time datetime="2014-09-25T12:19:18.000Z" itemprop="datePublished">9月 25</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/25/separate-table/">[MySQL案例]之Discuz大表拆分</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -259,19 +274,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/24/in-and-range/" class="archive-article-date">
   	<time datetime="2014-09-24T07:22:01.000Z" itemprop="datePublished">9月 24</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/24/in-and-range/">[MySQL SQL优化系列]之in与range查询</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL优化/">SQL优化</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -285,19 +305,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/22/recover-be-killed/" class="archive-article-date">
   	<time datetime="2014-09-22T03:23:12.000Z" itemprop="datePublished">9月 22</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/22/recover-be-killed/">[MySQL案例]之恢复进程莫名被杀</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -311,19 +336,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/20/a-invisible-lock/" class="archive-article-date">
   	<time datetime="2014-09-20T15:52:51.000Z" itemprop="datePublished">9月 20</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/20/a-invisible-lock/">[MySQL案例]之一把看不见的锁</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/database/">database</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -337,19 +367,24 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 	      	<a href="/2014/09/17/helloworld/" class="archive-article-date">
   	<time datetime="2014-09-17T07:22:11.000Z" itemprop="datePublished">9月 17</time>
 </a>
-	      	<br>
-	      	
-	    	
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/other/">other</a></li></ul>
-
-    	</div>
-    	
+        </div>
+    	 
   
     <h1 itemprop="name">
       <a class="archive-article-title" href="/2014/09/17/helloworld/">Hello World</a>
     </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/other/">other</a></li></ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
     </header>
   </div>
 </article>
@@ -358,12 +393,18 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     </div></section>
   
 
+    
+
+</div>
       <footer id="footer">
   <div class="outer">
     <div id="footer-info">
-    	<div class="footer-right">
+    	<div class="footer-left">
     		&copy; 2016 林晓嘉
     	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
     </div>
   </div>
 </footer>
@@ -371,9 +412,50 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
     
   <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
 
-  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
 
-  <script src="/js/main.js" type="text/javascript"></script>
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: false,
+		isArchive: true,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 
 
   </div>
