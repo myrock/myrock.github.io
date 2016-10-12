@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Technology change our life.]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://myrock.github.io/"/>
-  <updated>2016-01-20T06:42:58.135Z</updated>
+  <updated>2016-10-12T09:40:53.382Z</updated>
   <id>http://myrock.github.io/</id>
   
   <author>
@@ -286,7 +286,7 @@
     <link href="http://myrock.github.io/2014/11/07/redis-ops/"/>
     <id>http://myrock.github.io/2014/11/07/redis-ops/</id>
     <published>2014-11-07T09:07:15.000Z</published>
-    <updated>2014-11-10T08:28:11.000Z</updated>
+    <updated>2016-10-12T09:38:52.000Z</updated>
     <content type="html"><![CDATA[<p>本文主要介绍一些列简单的redis运维经验，帮助大家对redis的运维有个初步的了解，条目不分先后，后续还会持续添加。本文档预期读者为：redis使用者。</p>
 <h2 id="计算延迟时间">计算延迟时间</h2>
 <p>这里的延迟时间指的是指令请求的等待时间（单位为毫秒），包含网络延时以及单线程的命令等待，命令很简单：</p>
@@ -331,6 +331,10 @@
 <p>IO优化主要是redis快照或者aof产生的，一般我们需要根据redis中上数据的重要程度来设置快照频率，或者是快照只在slave上发生。</p>
 <h2 id="注意CPU使用率">注意CPU使用率</h2>
 <p>Redis是单线程作业，因此需要注意CPU使用率，除了分离业务，读写分离以外，twemproxy也能有效的提升redis的CPU利用率。</p>
+<h2 id="copy-on-write使用的内存可能真的会是2倍内存">copy-on-write使用的内存可能真的会是2倍内存</h2>
+<p>redis在触发COW的时候并不是说写多少数据用多少内存的，实际上在cow的过程中并不是修改多少数据使用多少内存，而是每次修改一个数据加载的最小单位是page，所以当你更新请求比较频繁且分散的话，double memory是可能的。</p>
+<h2 id="关服务的时候要注意">关服务的时候要注意</h2>
+<p>有的人备份数据是通过直接关闭redis服务使数据进行落地操作，但是但是但是你首先要确认你的save配置是啥，万一你的配置是save “”呢？那就嗝屁了。</p>
 ]]></content>
     <summary type="html">
     <![CDATA[<p>本文主要介绍一些列简单的redis运维经验，帮助大家对redis的运维有个初步的了解，条目不分先后，后续还会持续添加。本文档预期读者为：redis使用者。</p>
